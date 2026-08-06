@@ -17,7 +17,47 @@ npm run dev
 
 Abre http://localhost:5173
 
-## Personalizar para el cliente
+## Formulario discovery (plantilla reutilizable)
+
+Motor de encuestas con estética **AI Fitness Coach** + guardado en **Supabase** + envío por **WhatsApp**.
+
+| URL | Uso |
+|-----|-----|
+| `/encuesta.html` | Encuesta coach-discovery (default) |
+| `/encuesta?s=coach-discovery` | Con slug explícito |
+| `/e/coach-discovery` | URL corta (Vercel rewrite) |
+
+Documentación para nuevos clientes: **`docs/SURVEY-TEMPLATE.md`**
+
+### Supabase
+
+Proyecto: **Encuesta coach ai** (`soeyyyipgubxmyedgxng`)  
+Tabla: `survey_responses` — migración en `supabase/migrations/001_survey_responses.sql`
+
+### Variables de entorno
+
+Copia `.env.example` → `.env` y configura también en Vercel:
+
+```
+VITE_SUPABASE_URL=https://soeyyyipgubxmyedgxng.supabase.co
+VITE_SUPABASE_ANON_KEY=...
+VITE_WHATSAPP_RECIPIENT=569XXXXXXXX
+```
+
+### Deploy Vercel
+
+```bash
+npm run build
+npx vercel --prod
+```
+
+### Compartir por WhatsApp
+
+> Hola! Formulario corto (8–10 min) para entender tu coaching y validar la idea del desbloqueo con comprobante: [link]/encuesta
+
+Al finalizar: respuestas guardadas en Supabase + botón **Enviar por WhatsApp**.
+
+## Personalizar landing
 
 Edita `src/config/site.js`:
 
@@ -30,16 +70,13 @@ Edita `src/config/site.js`:
 
 ```
 src/
-├── config/site.js      # Datos de marca (editar aquí primero)
-├── components/         # Secciones de la landing
-│   ├── Header.jsx
-│   ├── Hero.jsx
-│   ├── Services.jsx
-│   ├── Plans.jsx
-│   ├── About.jsx
-│   ├── Contact.jsx
-│   └── Footer.jsx
-└── index.css           # Design tokens globales
+├── survey/             # Motor de encuestas reutilizable
+│   ├── SurveyApp.jsx
+│   ├── components.jsx  # Estética AI Fitness Coach
+│   └── surveys/        # Una encuesta por cliente/slug
+├── config/site.js      # Landing — datos de marca
+├── components/         # Secciones landing
+└── lib/supabase.js
 ```
 
 ## Design system
