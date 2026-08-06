@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { COLORS, FONTS, GlobalStyles } from "./theme.jsx";
+import { COLORS, FONTS, GlobalStyles, GRADIENTS, PremiumCard, PrimaryButton, SHADOWS } from "./theme.jsx";
 import {
   IntroScreen,
   MultiChoice,
@@ -59,9 +59,7 @@ export default function SurveyApp({ survey }) {
 
   const waMessage = useMemo(() => (done ? buildWhatsAppMessage(survey, answers) : ""), [done, survey, answers]);
   const waLink =
-    done && survey.whatsapp?.enabled
-      ? whatsappUrl(survey.whatsapp.recipient, waMessage)
-      : null;
+    done && survey.whatsapp?.enabled ? whatsappUrl(survey.whatsapp.recipient, waMessage) : null;
 
   useEffect(() => {
     if (!done) return;
@@ -120,8 +118,7 @@ export default function SurveyApp({ survey }) {
     }
   };
 
-  const isLast =
-    sectionIdx === sections.length - 1 && questionIdx === section.questions.length - 1;
+  const isLast = sectionIdx === sections.length - 1 && questionIdx === section.questions.length - 1;
 
   return (
     <>
@@ -129,28 +126,29 @@ export default function SurveyApp({ survey }) {
       <div
         style={{
           minHeight: "100vh",
-          background: COLORS.bg,
+          background: GRADIENTS.bg,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "20px",
+          padding: "24px 16px",
           fontFamily: FONTS.body,
         }}
       >
-        <div style={{ width: "100%", maxWidth: "560px" }}>
+        <div style={{ width: "100%", maxWidth: "580px" }}>
           {started && !done && (
-            <div style={{ marginBottom: "28px", animation: "fadeUp 0.5s ease" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+            <div style={{ marginBottom: "24px", animation: "fadeUp 0.5s ease" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
                 <span
                   style={{
-                    background: COLORS.accent,
+                    background: GRADIENTS.primary,
                     color: COLORS.accentText,
-                    borderRadius: "6px",
-                    padding: "2px 8px",
-                    fontSize: "11px",
+                    borderRadius: "8px",
+                    padding: "4px 10px",
+                    fontSize: "10px",
                     fontWeight: "700",
                     fontFamily: FONTS.mono,
-                    letterSpacing: "0.5px",
+                    letterSpacing: "0.1em",
+                    boxShadow: SHADOWS.glow,
                   }}
                 >
                   {survey.badge}
@@ -161,174 +159,158 @@ export default function SurveyApp({ survey }) {
               </div>
               <div
                 style={{
-                  height: "3px",
-                  background: "rgba(255,255,255,0.08)",
-                  borderRadius: "2px",
+                  height: "4px",
+                  background: "rgba(255,255,255,0.06)",
+                  borderRadius: "4px",
                   overflow: "hidden",
-                  marginTop: "8px",
                 }}
               >
                 <div
                   style={{
                     height: "100%",
                     width: `${progress}%`,
-                    background: `linear-gradient(90deg, ${COLORS.accent}, ${COLORS.accentDark})`,
-                    borderRadius: "2px",
-                    transition: "width 0.3s ease",
+                    background: GRADIENTS.progress,
+                    borderRadius: "4px",
+                    transition: "width 0.35s ease",
+                    boxShadow: SHADOWS.glow,
                   }}
                 />
               </div>
             </div>
           )}
 
-          <div
-            style={{
-              background: COLORS.card,
-              border: `1px solid ${COLORS.border}`,
-              borderRadius: "18px",
-              padding: "32px",
-              backdropFilter: "blur(10px)",
-              animation: "fadeUp 0.4s ease",
-            }}
-          >
-            {!started ? (
-              <IntroScreen survey={survey} onStart={() => setStarted(true)} />
-            ) : done ? (
-              <ResultScreen
-                survey={survey}
-                answers={answers}
-                submitState={submitState}
-                waLink={waLink}
-                onCopy={handleCopy}
-                copied={copied}
-              />
-            ) : (
-              <>
-                <div
-                  style={{
-                    display: "inline-block",
-                    background: "rgba(200,241,53,0.08)",
-                    border: "1px solid rgba(200,241,53,0.2)",
-                    borderRadius: "20px",
-                    padding: "4px 12px",
-                    fontSize: "12px",
-                    color: COLORS.accent,
-                    fontFamily: FONTS.mono,
-                    marginBottom: "12px",
-                  }}
-                >
-                  {section.label}
-                </div>
-                <h2
-                  style={{
-                    color: COLORS.textBright,
-                    fontFamily: FONTS.display,
-                    fontSize: "20px",
-                    fontWeight: "700",
-                    marginBottom: section.subtitle ? "6px" : "22px",
-                    lineHeight: "1.3",
-                  }}
-                >
-                  {section.title}
-                </h2>
-                {section.subtitle && (
-                  <p style={{ color: COLORS.muted, fontSize: "14px", marginBottom: "8px" }}>{section.subtitle}</p>
-                )}
-                {section.intro && (
-                  <p
+          <div style={{ animation: "fadeUp 0.45s ease" }}>
+            <PremiumCard>
+              {!started ? (
+                <IntroScreen survey={survey} onStart={() => setStarted(true)} />
+              ) : done ? (
+                <ResultScreen
+                  survey={survey}
+                  submitState={submitState}
+                  waLink={waLink}
+                  onCopy={handleCopy}
+                  copied={copied}
+                />
+              ) : (
+                <>
+                  <div
                     style={{
-                      background: "rgba(200,241,53,0.06)",
-                      borderLeft: `3px solid ${COLORS.accent}`,
-                      padding: "12px 14px",
-                      margin: "12px 0 20px",
-                      fontSize: "14px",
-                      color: COLORS.muted,
-                      lineHeight: "1.55",
-                      borderRadius: "0 8px 8px 0",
+                      display: "inline-block",
+                      background: COLORS.accentMuted,
+                      border: `1px solid ${COLORS.accentBorder}`,
+                      borderRadius: "20px",
+                      padding: "5px 14px",
+                      fontSize: "11px",
+                      color: COLORS.accentLight,
+                      fontFamily: FONTS.mono,
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                      marginBottom: "14px",
                     }}
                   >
-                    {section.intro}
-                  </p>
-                )}
-
-                <h3
-                  style={{
-                    color: COLORS.textBright,
-                    fontFamily: FONTS.display,
-                    fontSize: "17px",
-                    fontWeight: "600",
-                    marginBottom: "18px",
-                    lineHeight: "1.35",
-                  }}
-                >
-                  {question.text}
-                  {question.required && <span style={{ color: COLORS.error }}> *</span>}
-                </h3>
-
-                <div style={{ marginBottom: "28px" }}>
-                  {renderQuestion(question, answers[question.id], (v) =>
-                    setAnswers((prev) => ({ ...prev, [question.id]: v })),
+                    {section.label}
+                  </div>
+                  <h2
+                    style={{
+                      color: COLORS.textBright,
+                      fontFamily: FONTS.display,
+                      fontSize: "22px",
+                      fontWeight: "700",
+                      marginBottom: section.subtitle ? "6px" : "20px",
+                      lineHeight: "1.25",
+                      letterSpacing: "-0.02em",
+                    }}
+                  >
+                    {section.title}
+                  </h2>
+                  {section.subtitle && (
+                    <p style={{ color: COLORS.dim, fontSize: "14px", marginBottom: "10px" }}>{section.subtitle}</p>
                   )}
-                  {emailInvalid && (
-                    <p style={{ marginTop: "8px", color: COLORS.error, fontSize: "12px", fontFamily: FONTS.mono }}>
-                      Email inválido
+                  {section.intro && (
+                    <p
+                      style={{
+                        background: COLORS.accentMuted,
+                        borderLeft: `3px solid ${COLORS.accent}`,
+                        padding: "14px 16px",
+                        margin: "14px 0 22px",
+                        fontSize: "14px",
+                        color: COLORS.muted,
+                        lineHeight: "1.6",
+                        borderRadius: "0 10px 10px 0",
+                      }}
+                    >
+                      {section.intro}
                     </p>
                   )}
-                </div>
 
-                <div style={{ display: "flex", gap: "12px" }}>
-                  <button
-                    type="button"
-                    onClick={back}
+                  <h3
                     style={{
-                      flex: "0 0 auto",
-                      background: "transparent",
-                      border: `1.5px solid ${COLORS.borderStrong}`,
-                      borderRadius: "10px",
-                      padding: "13px 18px",
-                      color: COLORS.muted,
-                      fontSize: "20px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    ←
-                  </button>
-                  <button
-                    type="button"
-                    onClick={next}
-                    disabled={!canContinue || emailInvalid}
-                    style={{
-                      flex: 1,
-                      background: canContinue && !emailInvalid ? COLORS.accent : "rgba(255,255,255,0.05)",
-                      border: "none",
-                      borderRadius: "10px",
-                      padding: "14px 20px",
-                      color: canContinue && !emailInvalid ? COLORS.accentText : "#555",
-                      fontFamily: FONTS.body,
-                      fontSize: "15px",
+                      color: COLORS.textBright,
+                      fontFamily: FONTS.display,
+                      fontSize: "17px",
                       fontWeight: "600",
-                      cursor: canContinue && !emailInvalid ? "pointer" : "default",
-                      transition: "all 0.2s ease",
+                      marginBottom: "18px",
+                      lineHeight: "1.4",
                     }}
                   >
-                    {isLast ? "Enviar respuestas" : "Continuar →"}
-                  </button>
-                </div>
-              </>
-            )}
+                    {question.text}
+                    {question.required && <span style={{ color: COLORS.accentLight }}> *</span>}
+                  </h3>
+
+                  <div style={{ marginBottom: "28px" }}>
+                    {renderQuestion(question, answers[question.id], (v) =>
+                      setAnswers((prev) => ({ ...prev, [question.id]: v })),
+                    )}
+                    {emailInvalid && (
+                      <p style={{ marginTop: "8px", color: COLORS.error, fontSize: "12px", fontFamily: FONTS.mono }}>
+                        Email inválido
+                      </p>
+                    )}
+                  </div>
+
+                  <div style={{ display: "flex", gap: "12px" }}>
+                    <button
+                      type="button"
+                      onClick={back}
+                      style={{
+                        flex: "0 0 auto",
+                        background: "rgba(255,255,255,0.03)",
+                        border: `1.5px solid ${COLORS.borderStrong}`,
+                        borderRadius: "12px",
+                        padding: "13px 18px",
+                        color: COLORS.muted,
+                        fontSize: "18px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      ←
+                    </button>
+                    <PrimaryButton
+                      onClick={next}
+                      disabled={!canContinue || emailInvalid}
+                      fullWidth={false}
+                      style={{ flex: 1 }}
+                    >
+                      {isLast ? "Enviar respuestas" : "Continuar →"}
+                    </PrimaryButton>
+                  </div>
+                </>
+              )}
+            </PremiumCard>
           </div>
 
           {started && !done && (
             <p
               style={{
                 color: COLORS.faint,
-                fontSize: "12px",
+                fontSize: "11px",
                 textAlign: "center",
-                marginTop: "16px",
+                marginTop: "18px",
                 fontFamily: FONTS.mono,
+                letterSpacing: "0.04em",
               }}
             >
-              Tus respuestas son confidenciales
+              INFORMACIÓN CONFIDENCIAL · STUDIO FIT
             </p>
           )}
         </div>
