@@ -1,0 +1,30 @@
+﻿---
+description: Web fitness cliente — reglas de desarrollo
+alwaysApply: true
+---
+
+# Web Fitness Cliente
+
+Landing page React/Vite para negocio fitness.
+
+## Prioridades
+
+1. Personalizar src/config/site.js con datos reales del cliente
+2. Mantener design system: fondo #0D0D0D, acento #C8F135, fuentes Syne/DM Sans
+3. Mobile-first, accesible, carga rapida
+
+## Al anadir secciones
+
+- Crear componente en src/components/ con CSS Module
+- Usar clases globales: .container, .section, .section-label, .section-title, .btn
+- Copy en espanol, tono profesional-motivador
+
+## No hacer
+
+- Dietas clinicas ni diagnosticos medicos en el copy
+- Hardcodear datos de marca fuera de site.js
+- Anadir dependencias pesadas sin necesidad
+
+## Contexto previo
+
+Ver docs/CONTEXTO.md para proyectos fitness locales de referencia.
