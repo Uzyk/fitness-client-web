@@ -4,9 +4,8 @@
 
 | Ruta | Uso |
 |------|-----|
-| `/admin` | Panel administrador |
+| `/app` o `/admin` | **Portal único** — login y panel según rol |
 | `/invite?token=...` | Registro de coach (link por email) |
-| `/app` | Panel del coach (tras login) |
 
 ## 1. Crear tu cuenta admin
 

@@ -3,14 +3,19 @@ import ScreenHeader from "../components/ScreenHeader.jsx";
 import ActivityRings, { RingLegend } from "../components/ActivityRings.jsx";
 import { getAttentionItems, getPaymentSummary, getStudent, getTodayAgenda, coach as defaultCoach } from "../data/mock.js";
 
-export default function HomeScreen({ coach = defaultCoach, onOpenStudent }) {
+export default function HomeScreen({ coach = defaultCoach, onOpenStudent, onLogout }) {
   const attention = getAttentionItems();
   const summary = getPaymentSummary();
   const todayAgenda = getTodayAgenda();
 
   return (
     <div className="coach-screen">
-      <ScreenHeader eyebrow={coach.monthLabel} title={`Hola, ${coach.name}`} subtitle={coach.brand} />
+      <ScreenHeader
+        eyebrow={coach.monthLabel}
+        title={`Hola, ${coach.name}`}
+        subtitle={coach.brand}
+        onLogout={onLogout}
+      />
 
       <section className="coach-section coach-animate-in" style={{ animationDelay: "0ms" }}>
         <div className="coach-hero-card">

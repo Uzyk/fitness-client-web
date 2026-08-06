@@ -1,46 +1,35 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getCoachForUser, getSession, onAuthChange, signIn, signOut } from "../../lib/auth.js";
+import { getCoachForUser } from "../../lib/auth.js";
 import { applyCoachTheme, DEFAULT_COACH_THEME } from "../../lib/coachTheme.js";
 import { supabase } from "../../lib/supabase.js";
+import { useAuth } from "../../portal/context/AuthContext.jsx";
 
 const CoachContext = createContext(null);
 
 export function CoachProvider({ children }) {
+  const { session } = useAuth();
   const [ready, setReady] = useState(false);
-  const [session, setSession] = useState(null);
   const [coach, setCoach] = useState(null);
 
   const refresh = async () => {
-    if (!supabase) {
-      setSession({ demo: true });
-      setCoach({
-        brand_name: "Vania Gaete",
-        theme: DEFAULT_COACH_THEME,
-        status: "active",
-      });
-      applyCoachTheme(DEFAULT_COACH_THEME);
+    if (!supabase || !session) {
+      setCoach(null);
       setReady(true);
       return;
     }
-    const s = await getSession();
-    setSession(s);
-    if (s) {
-      const c = await getCoachForUser();
-      setCoach(c);
-      if (c?.theme) applyCoachTheme(c.theme);
-    } else {
-      setCoach(null);
-    }
+    const c = await getCoachForUser();
+    setCoach(c);
+    if (c?.theme) applyCoachTheme(c.theme);
+    else applyCoachTheme(DEFAULT_COACH_THEME);
     setReady(true);
   };
 
   useEffect(() => {
     refresh();
-    return onAuthChange(() => refresh());
-  }, []);
+  }, [session]);
 
   return (
-    <CoachContext.Provider value={{ ready, session, coach, refresh, signIn, signOut }}>
+    <CoachContext.Provider value={{ ready, coach, refresh }}>
       {children}
     </CoachContext.Provider>
   );

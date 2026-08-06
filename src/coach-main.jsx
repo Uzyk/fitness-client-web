@@ -1,13 +1,15 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import CoachApp from "./coach/CoachApp.jsx";
+import PortalApp from "./portal/PortalApp.jsx";
 import { ThemeProvider } from "./coach/hooks/useTheme.jsx";
+import "./portal/portal.css";
+import "./admin/admin.css";
 import "./coach/coach.css";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ThemeProvider>
-      <CoachApp />
+      <PortalApp />
     </ThemeProvider>
   </StrictMode>,
 );

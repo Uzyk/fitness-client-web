@@ -11,6 +11,7 @@ export default defineConfig({
         encuesta: 'encuesta.html',
         coach: 'coach.html',
         admin: 'admin.html',
+        portal: 'portal.html',
         invite: 'invite.html',
       },
     },

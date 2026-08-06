@@ -2,9 +2,10 @@
   "rewrites": [
     { "source": "/encuesta", "destination": "/encuesta.html" },
     { "source": "/e/:slug", "destination": "/encuesta.html?s=:slug" },
-    { "source": "/app", "destination": "/coach.html" },
-    { "source": "/app/:path*", "destination": "/coach.html" },
-    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/app", "destination": "/portal.html" },
+    { "source": "/app/:path*", "destination": "/portal.html" },
+    { "source": "/admin", "destination": "/portal.html" },
+    { "source": "/admin/:path*", "destination": "/portal.html" },
     { "source": "/invite", "destination": "/invite.html" }
   ]
 }

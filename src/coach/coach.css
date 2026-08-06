@@ -136,6 +136,25 @@ textarea {
   min-width: 0;
 }
 
+.coach-screen-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.coach-btn-ghost {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 999px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .coach-eyebrow {
   font-size: 13px;
   font-weight: 600;
