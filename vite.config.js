@@ -9,6 +9,9 @@ export default defineConfig({
       input: {
         main: 'index.html',
         encuesta: 'encuesta.html',
+        coach: 'coach.html',
+        admin: 'admin.html',
+        invite: 'invite.html',
       },
     },
   },
