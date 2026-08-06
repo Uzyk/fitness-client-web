@@ -1,7 +1,7 @@
 const RINGS = [
-  { key: "paid", radius: 42, stroke: 10, track: "var(--ring-track)" },
-  { key: "pending", radius: 30, stroke: 10, track: "var(--ring-track)" },
-  { key: "overdue", radius: 18, stroke: 10, track: "var(--ring-track)" },
+  { key: "paid", radius: 46, stroke: 9, track: "var(--ring-track)" },
+  { key: "pending", radius: 33, stroke: 9, track: "var(--ring-track)" },
+  { key: "overdue", radius: 22, stroke: 9, track: "var(--ring-track)" },
 ];
 
 const COLORS = {
