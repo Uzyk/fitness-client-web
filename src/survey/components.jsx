@@ -203,28 +203,74 @@ export function TextField({ question, value = "", onChange, multiline = false })
 }
 
 export function IntroScreen({ survey, onStart }) {
-  const { intro } = survey;
+  const { intro, brand } = survey;
 
   return (
     <div style={{ textAlign: "left" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
-        <div style={{ fontSize: "34px" }}>{intro.icon}</div>
-        <div>
-          <h2
+        {brand ? (
+          <div
             style={{
-              color: COLORS.textBright,
-              fontFamily: FONTS.display,
-              fontSize: "22px",
-              fontWeight: "800",
-              margin: 0,
-              lineHeight: "1.2",
+              width: "40px",
+              height: "40px",
+              borderRadius: "10px",
+              background: "rgba(200, 241, 53, 0.12)",
+              border: "1px solid rgba(200, 241, 53, 0.3)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: COLORS.accent,
+              fontSize: "16px",
+              flexShrink: 0,
+            }}
+          >
+            {brand.mark || "◆"}
+          </div>
+        ) : (
+          <div style={{ fontSize: "34px" }}>{intro.icon}</div>
+        )}
+        <div>
+          {brand && (
+            <>
+              <h2
+                style={{
+                  color: COLORS.textBright,
+                  fontFamily: FONTS.display,
+                  fontSize: "22px",
+                  fontWeight: "800",
+                  margin: 0,
+                  lineHeight: "1.2",
+                }}
+              >
+                {brand.name}
+              </h2>
+              <p style={{ color: COLORS.muted, fontFamily: FONTS.body, fontSize: "13px", margin: "4px 0 0 0" }}>
+                {brand.tagline}
+              </p>
+            </>
+          )}
+          <p
+            style={{
+              color: brand ? COLORS.accent : COLORS.muted,
+              fontFamily: brand ? FONTS.mono : FONTS.body,
+              fontSize: brand ? "12px" : "14px",
+              margin: brand ? "10px 0 0 0" : "6px 0 0 0",
+              letterSpacing: brand ? "0.3px" : undefined,
+              fontWeight: brand ? "600" : undefined,
             }}
           >
             {survey.title}
-          </h2>
-          <p style={{ color: COLORS.muted, fontFamily: FONTS.body, fontSize: "14px", margin: "6px 0 0 0" }}>
-            {survey.subtitle}
           </p>
+          {!brand && (
+            <p style={{ color: COLORS.muted, fontFamily: FONTS.body, fontSize: "14px", margin: "6px 0 0 0" }}>
+              {survey.subtitle}
+            </p>
+          )}
+          {brand && (
+            <p style={{ color: COLORS.muted, fontFamily: FONTS.body, fontSize: "14px", margin: "4px 0 0 0" }}>
+              {survey.subtitle}
+            </p>
+          )}
         </div>
       </div>
 
@@ -427,7 +473,7 @@ export function ResultScreen({ survey, answers, submitState, waLink, onCopy, cop
       )}
 
       <p style={{ color: COLORS.dim, fontFamily: FONTS.body, fontSize: "13px" }}>
-        {survey.badge} · {survey.title}
+        {survey.brand?.name ? `${survey.brand.name} · ` : ""}{survey.title}
       </p>
     </div>
   );

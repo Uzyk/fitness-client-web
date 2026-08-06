@@ -34,7 +34,7 @@ export async function saveSurveyResponse(survey, answers) {
 
 export function buildWhatsAppMessage(survey, answers) {
   const lines = [
-    `📋 *${survey.title}*`,
+    `📋 *${survey.brand?.name ? `${survey.brand.name} — ` : ""}${survey.title}*`,
     "",
     `👤 *${answers.nombre || "Sin nombre"}*${answers.marca ? ` · ${answers.marca}` : ""}`,
     "",
