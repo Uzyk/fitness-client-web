@@ -1,11 +1,19 @@
 import { useTheme } from "../hooks/useTheme.jsx";
 
-export default function ScreenHeader({ eyebrow, title, subtitle, showThemeToggle = true, onLogout }) {
+export default function ScreenHeader({
+  studioName,
+  eyebrow,
+  title,
+  subtitle,
+  showThemeToggle = true,
+  onLogout,
+}) {
   const { theme, toggleTheme } = useTheme();
 
   return (
     <header className="coach-screen-header">
       <div className="coach-screen-header-text">
+        {studioName && <p className="coach-studio-name">{studioName}</p>}
         {eyebrow && <p className="coach-eyebrow">{eyebrow}</p>}
         <h1 className="coach-large-title">{title}</h1>
         {subtitle && <p className="coach-subtitle">{subtitle}</p>}

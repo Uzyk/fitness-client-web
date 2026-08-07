@@ -81,7 +81,7 @@ export function modalityLabel(modality) {
 /** Descripción corta de la modalidad para UI */
 export function modalityDescription(modality) {
   const map = {
-    presencial: "Sesiones en gimnasio",
+    presencial: "Sesiones en gimnasio · corrección en persona",
     online: "Corrección por video post entrenamiento",
     mixto: "Presencial + videos online",
   };

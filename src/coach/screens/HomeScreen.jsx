@@ -11,9 +11,9 @@ export default function HomeScreen({ coach = defaultCoach, onOpenStudent, onLogo
   return (
     <div className="coach-screen">
       <ScreenHeader
+        studioName={coach.brand}
         eyebrow={coach.monthLabel}
         title={`Hola, ${coach.name}`}
-        subtitle={coach.brand}
         onLogout={onLogout}
       />
 
@@ -96,7 +96,7 @@ export default function HomeScreen({ coach = defaultCoach, onOpenStudent, onLogo
           <div className="coach-row">
             <div className="coach-row-content">
               <div className="coach-row-title">{summary.total} alumnos activos</div>
-              <div className="coach-row-subtitle">Panel Vania Gaete</div>
+              <div className="coach-row-subtitle">{coach.brand}</div>
             </div>
           </div>
         </div>

@@ -45,11 +45,13 @@ function VideoReviewCard({ video, onPublish }) {
 }
 
 function ResumenTab({ student, focusKind, onPublishVideo }) {
-  const [correction, setCorrection] = useState("");
+  const [comment, setComment] = useState("");
+  const isPresencial = student.modality === "presencial";
+  const isOnline = student.modality === "online";
 
   return (
     <>
-      {student.pendingVideos.length > 0 && (
+      {isOnline && student.pendingVideos.length > 0 && (
         <section className="coach-section">
           <h2 className="coach-section-label">Pendiente de revisar</h2>
           {student.pendingVideos.map((video) => (
@@ -58,20 +60,20 @@ function ResumenTab({ student, focusKind, onPublishVideo }) {
         </section>
       )}
 
-      {student.modality === "presencial" && (
+      {isPresencial && (
         <section className="coach-section">
-          <h2 className="coach-section-label">Corrección presencial</h2>
+          <h2 className="coach-section-label">Comentarios</h2>
           <div className="coach-group" style={{ padding: 16 }}>
             <textarea
               className="coach-feedback-input"
-              placeholder="Ej: Bajar peso en press banca..."
-              value={correction}
-              onChange={(e) => setCorrection(e.target.value)}
+              placeholder="Ej: Hoy entrena pierna ligero, evita cargas altas en sentadilla..."
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
               rows={3}
               style={{ marginTop: 0 }}
             />
-            <button type="button" className="coach-btn-primary" disabled={!correction.trim()}>
-              Guardar corrección
+            <button type="button" className="coach-btn-primary" disabled={!comment.trim()}>
+              Enviar comentario
             </button>
           </div>
         </section>
@@ -79,24 +81,28 @@ function ResumenTab({ student, focusKind, onPublishVideo }) {
 
       {student.recentFeedback.length > 0 && (
         <section className="coach-section">
-          <h2 className="coach-section-label">Correcciones recientes</h2>
+          <h2 className="coach-section-label">
+            {isPresencial ? "Comentarios recientes" : "Correcciones recientes"}
+          </h2>
           <div className="coach-group">
             {student.recentFeedback.map((fb) => (
-              <div key={fb.id} className="coach-row" style={{ flexDirection: "column", alignItems: "flex-start" }}>
-                <div className="coach-row-title">
-                  {fb.date} · {fb.type === "online" ? "Online" : "Presencial"}
-                  {fb.exercise ? ` · ${fb.exercise}` : ""}
-                </div>
-                <div className="coach-row-subtitle coach-row-subtitle--body" style={{ marginTop: 6 }}>
-                  {fb.text}
-                </div>
+              <div key={fb.id} className="coach-feedback-item">
+                <p
+                  className={`coach-feedback-date ${
+                    isOnline ? "coach-feedback-date--online" : "coach-feedback-date--presencial"
+                  }`}
+                >
+                  {fb.date}
+                  {isOnline && fb.exercise ? ` · ${fb.exercise}` : ""}
+                </p>
+                <p className="coach-feedback-text">{fb.text}</p>
               </div>
             ))}
           </div>
         </section>
       )}
 
-      {student.modality === "online" && (
+      {isOnline && (
         <section className="coach-section">
           <h2 className="coach-section-label">Modalidad online</h2>
           <div className="coach-group">
@@ -156,6 +162,7 @@ function RutinaTab({ student }) {
     return <p className="coach-empty">Sin rutina cargada.</p>;
   }
 
+  const showVideoStatus = student.modality === "online";
   const statusLabel = {
     pending: { text: "Video pendiente", class: "coach-badge--purple" },
     done: { text: "Feedback enviado", class: "coach-badge--green" },
@@ -173,7 +180,7 @@ function RutinaTab({ student }) {
                 <div className="coach-row-title">{ex.name}</div>
                 <div className="coach-row-subtitle">{ex.detail}</div>
               </div>
-              <span className={`coach-badge ${st.class}`}>{st.text}</span>
+              {showVideoStatus && <span className={`coach-badge ${st.class}`}>{st.text}</span>}
             </div>
           );
         })}
@@ -235,8 +242,8 @@ export default function StudentDetailScreen({ student, focusKind, onBack }) {
   return (
     <>
       <NavBar title={student.name} onBack={onBack} />
-      <div className="coach-screen" style={{ paddingTop: 0 }}>
-        <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+      <div className="coach-screen coach-screen--detail">
+        <div className="coach-student-meta">
           <ModalityBadge modality={student.modality} />
           <PaymentBadge status={student.paymentStatus} />
         </div>
