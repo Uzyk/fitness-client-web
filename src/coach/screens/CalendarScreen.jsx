@@ -1,26 +1,51 @@
 import { useMemo, useState } from "react";
-import MonthCalendar, { REFERENCE_TODAY, toDateKey } from "../components/MonthCalendar.jsx";
+import MonthCalendar from "../components/MonthCalendar.jsx";
+import ScreenHeader from "../components/ScreenHeader.jsx";
+import { useCoach } from "../context/CoachContext.jsx";
 import {
+  formatAgendaSubtitle,
+  getAgendaByDate,
   getOnlineTrainingDatesSet,
   getSessionDatesSet,
-  getUpcomingAgenda,
-  getAgendaByDate,
   getStudent,
-} from "../data/mock.js";
-import ScreenHeader from "../components/ScreenHeader.jsx";
-import { formatDayLong, parseDateKey } from "../utils/calendar.js";
+  getUpcomingAgenda,
+} from "../data/studentData.js";
+import { getRoutineNameForSchedule } from "../data/routinePlans.js";
+import { formatDayLong, parseDateKey, toDateKey } from "../utils/calendar.js";
 import { modalityLabel } from "../theme.js";
 
-function AgendaRow({ item, onOpenStudent }) {
-  const student = getStudent(item.studentId);
+const TODAY = new Date();
+
+function RoutineBadge({ name, linked = true }) {
+  return (
+    <span
+      className={`coach-routine-badge${linked ? "" : " coach-routine-badge--muted"}`}
+      title={name}
+    >
+      {name}
+    </span>
+  );
+}
+
+function SessionMeta({ item }) {
+  const parts = [];
+  if (item.kind === "presencial" && item.time) parts.push(item.time);
+  parts.push(modalityLabel(item.kind === "presencial" ? "presencial" : "online"));
+  return <span className="coach-row-subtitle">{parts.join(" · ")}</span>;
+}
+
+function AgendaRow({ item, students, onOpenStudent }) {
+  const student = getStudent(students, item.studentId);
   if (!student) return null;
 
   const isOnline = item.kind === "online";
+  const routineName = getRoutineNameForSchedule(student, item);
+  const hasLinkedRoutine = Boolean(item.routineId && routineName);
 
   return (
     <button
       type="button"
-      className="coach-row"
+      className="coach-row coach-row--session"
       onClick={() => onOpenStudent(item.studentId, isOnline ? "videos" : undefined)}
     >
       {isOnline ? (
@@ -30,7 +55,13 @@ function AgendaRow({ item, onOpenStudent }) {
       )}
       <div className="coach-row-content">
         <div className="coach-row-title">{student.name}</div>
-        <div className="coach-row-subtitle">{modalityLabel(student.modality)}</div>
+        <div className="coach-session-meta">
+          <RoutineBadge
+            name={routineName || item.focus || "Sin rutina"}
+            linked={hasLinkedRoutine}
+          />
+          <SessionMeta item={item} />
+        </div>
       </div>
       <span className="coach-chevron">›</span>
     </button>
@@ -38,9 +69,9 @@ function AgendaRow({ item, onOpenStudent }) {
 }
 
 function formatUpcomingDate(dateKey) {
-  const todayKey = toDateKey(REFERENCE_TODAY);
+  const todayKey = toDateKey(TODAY);
   if (dateKey === todayKey) return "Hoy";
-  const tomorrow = new Date(REFERENCE_TODAY);
+  const tomorrow = new Date(TODAY);
   tomorrow.setDate(tomorrow.getDate() + 1);
   if (dateKey === toDateKey(tomorrow)) return "Mañana";
   const date = parseDateKey(dateKey);
@@ -48,14 +79,33 @@ function formatUpcomingDate(dateKey) {
 }
 
 export default function CalendarScreen({ onOpenStudent }) {
-  const [viewYear, setViewYear] = useState(REFERENCE_TODAY.getFullYear());
-  const [viewMonth, setViewMonth] = useState(REFERENCE_TODAY.getMonth());
-  const [selectedDateKey, setSelectedDateKey] = useState(toDateKey(REFERENCE_TODAY));
+  const { students, schedule, scheduleSession } = useCoach();
+  const [viewYear, setViewYear] = useState(TODAY.getFullYear());
+  const [viewMonth, setViewMonth] = useState(TODAY.getMonth());
+  const [selectedDateKey, setSelectedDateKey] = useState(toDateKey(TODAY));
+  const [showForm, setShowForm] = useState(false);
+  const [studentId, setStudentId] = useState("");
+  const [kind, setKind] = useState("presencial");
+  const [date, setDate] = useState(selectedDateKey);
+  const [time, setTime] = useState("09:00");
+  const [place, setPlace] = useState("Gimnasio");
+  const [focus, setFocus] = useState("Entrenamiento");
+  const [routineId, setRoutineId] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const presencialDates = useMemo(() => getSessionDatesSet(), []);
-  const onlineDates = useMemo(() => getOnlineTrainingDatesSet(), []);
-  const upcoming = useMemo(() => getUpcomingAgenda(toDateKey(REFERENCE_TODAY), 5), []);
-  const dayAgenda = useMemo(() => getAgendaByDate(selectedDateKey), [selectedDateKey]);
+  const selectedStudent = getStudent(students, studentId);
+  const studentRoutines = selectedStudent?.routines || [];
+
+  const presencialDates = useMemo(() => getSessionDatesSet(schedule), [schedule]);
+  const onlineDates = useMemo(() => getOnlineTrainingDatesSet(schedule), [schedule]);
+  const upcoming = useMemo(
+    () => getUpcomingAgenda(schedule, toDateKey(TODAY), 5),
+    [schedule],
+  );
+  const dayAgenda = useMemo(
+    () => getAgendaByDate(schedule, selectedDateKey),
+    [schedule, selectedDateKey],
+  );
 
   const goPrevMonth = () => {
     if (viewMonth === 0) {
@@ -75,6 +125,33 @@ export default function CalendarScreen({ onOpenStudent }) {
     }
   };
 
+  const selectDate = (dateKey) => {
+    setSelectedDateKey(dateKey);
+    const d = parseDateKey(dateKey);
+    setViewYear(d.getFullYear());
+    setViewMonth(d.getMonth());
+  };
+
+  const handleSchedule = async (e) => {
+    e.preventDefault();
+    if (!studentId || !date) return;
+    setSaving(true);
+    try {
+      await scheduleSession(studentId, {
+        date,
+        kind,
+        time: kind === "presencial" ? time : null,
+        place: kind === "presencial" ? place : null,
+        focus: kind === "online" && !routineId ? focus : null,
+        routineId: routineId || null,
+      });
+      setShowForm(false);
+      selectDate(date);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="coach-screen">
       <ScreenHeader title="Calendario" subtitle="Sesiones y entrenamientos" />
@@ -88,24 +165,20 @@ export default function CalendarScreen({ onOpenStudent }) {
             </div>
           ) : (
             upcoming.map((item) => {
-              const student = getStudent(item.studentId);
-              const isOnline = item.kind === "online";
+              const student = getStudent(students, item.studentId);
+              const sessionSubtitle = formatAgendaSubtitle(item);
               return (
                 <button
                   key={item.id}
                   type="button"
                   className="coach-row"
-                  onClick={() => {
-                    setSelectedDateKey(item.date);
-                    setViewYear(parseDateKey(item.date).getFullYear());
-                    setViewMonth(parseDateKey(item.date).getMonth());
-                  }}
+                  onClick={() => selectDate(item.date)}
                 >
                   <div className="coach-row-content">
                     <div className="coach-row-title">{student?.name}</div>
                     <div className="coach-row-subtitle">
-                      {modalityLabel(student?.modality)}
-                      {` · ${formatUpcomingDate(item.date)}`}
+                      {formatUpcomingDate(item.date)}
+                      {sessionSubtitle ? ` · ${sessionSubtitle}` : ""}
                     </div>
                   </div>
                   <span className="coach-chevron">›</span>
@@ -145,15 +218,100 @@ export default function CalendarScreen({ onOpenStudent }) {
             </div>
           ) : (
             dayAgenda.map((item) => (
-              <AgendaRow key={item.id} item={item} onOpenStudent={onOpenStudent} />
+              <AgendaRow
+                key={item.id}
+                item={item}
+                students={students}
+                onOpenStudent={onOpenStudent}
+              />
             ))
           )}
         </div>
       </section>
 
-      <button type="button" className="coach-btn-primary" style={{ marginTop: 8 }}>
-        + Agendar sesión
-      </button>
+      {showForm ? (
+        <form className="coach-inline-form coach-glass" onSubmit={handleSchedule} style={{ marginTop: 8 }}>
+          <h3 className="coach-section-label">Agendar sesión</h3>
+          <select value={studentId} onChange={(e) => {
+            setStudentId(e.target.value);
+            setRoutineId("");
+          }} required>
+            <option value="">Seleccionar alumno</option>
+            {students.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+          {studentRoutines.length > 0 && (
+            <select
+              value={routineId}
+              onChange={(e) => setRoutineId(e.target.value)}
+              aria-label="Rutina del día"
+            >
+              <option value="">Sin rutina específica</option>
+              {studentRoutines.map((plan) => (
+                <option key={plan.id} value={plan.id}>
+                  {plan.name}
+                </option>
+              ))}
+            </select>
+          )}
+          {studentRoutines.length === 0 && studentId && (
+            <p className="coach-routine-hint">
+              Crea rutinas nombradas en la ficha del alumno (pestaña Rutina) para asignarlas aquí.
+            </p>
+          )}
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+          <select value={kind} onChange={(e) => setKind(e.target.value)}>
+            <option value="presencial">Presencial</option>
+            <option value="online">Online</option>
+          </select>
+          {kind === "presencial" ? (
+            <>
+              <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+              <input
+                type="text"
+                placeholder="Lugar"
+                value={place}
+                onChange={(e) => setPlace(e.target.value)}
+              />
+            </>
+          ) : (
+            !routineId && (
+              <input
+                type="text"
+                placeholder="Enfoque del entrenamiento (si no eliges rutina)"
+                value={focus}
+                onChange={(e) => setFocus(e.target.value)}
+              />
+            )
+          )}
+          <div className="coach-inline-actions">
+            <button type="submit" className="coach-btn-primary" disabled={saving}>
+              {saving ? "Agendando…" : "Confirmar"}
+            </button>
+            <button type="button" className="coach-btn-secondary" onClick={() => setShowForm(false)}>
+              Cancelar
+            </button>
+          </div>
+        </form>
+      ) : (
+        <button
+          type="button"
+          className="coach-btn-primary"
+          style={{ marginTop: 8 }}
+          onClick={() => {
+            setDate(selectedDateKey);
+            const first = students[0];
+            setStudentId(first?.id || "");
+            setRoutineId("");
+            setShowForm(true);
+          }}
+        >
+          + Agendar sesión
+        </button>
+      )}
     </div>
   );
 }

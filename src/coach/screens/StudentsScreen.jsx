@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import ScreenHeader from "../components/ScreenHeader.jsx";
-import { students, formatCLP } from "../data/mock.js";
+import { formatCLP } from "../data/studentData.js";
 import { ModalityBadge, PaymentBadge, StudentAlerts } from "../components/Badges.jsx";
+import { useCoach } from "../context/CoachContext.jsx";
 
 const FILTERS = [
   { id: "all", label: "Todos" },
@@ -10,8 +11,15 @@ const FILTERS = [
 ];
 
 export default function StudentsScreen({ onOpenStudent }) {
+  const { students, addStudent } = useCoach();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
+  const [showForm, setShowForm] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [modality, setModality] = useState("online");
+  const [fee, setFee] = useState("70000");
+  const [saving, setSaving] = useState(false);
 
   const filtered = useMemo(() => {
     return students.filter((s) => {
@@ -19,7 +27,26 @@ export default function StudentsScreen({ onOpenStudent }) {
       const matchQuery = s.name.toLowerCase().includes(query.toLowerCase());
       return matchFilter && matchQuery;
     });
-  }, [query, filter]);
+  }, [students, query, filter]);
+
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim()) return;
+    setSaving(true);
+    try {
+      await addStudent({
+        fullName: name.trim(),
+        email: email.trim(),
+        modality,
+        monthlyFee: Number(fee) || 70000,
+      });
+      setName("");
+      setEmail("");
+      setShowForm(false);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="coach-screen">
@@ -77,9 +104,55 @@ export default function StudentsScreen({ onOpenStudent }) {
         <p className="coach-empty">No hay alumnos con ese filtro.</p>
       )}
 
-      <button type="button" className="coach-btn-primary" style={{ marginTop: 20 }}>
-        + Agregar alumno
-      </button>
+      {showForm ? (
+        <form className="coach-inline-form coach-glass" onSubmit={handleAdd} style={{ marginTop: 20 }}>
+          <h3 className="coach-section-label">Nuevo alumno</h3>
+          <input
+            type="text"
+            placeholder="Nombre completo"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <select value={modality} onChange={(e) => setModality(e.target.value)}>
+            <option value="online">Online</option>
+            <option value="presencial">Presencial</option>
+            <option value="mixto">Mixto</option>
+          </select>
+          <input
+            type="number"
+            placeholder="Cuota mensual (CLP)"
+            value={fee}
+            onChange={(e) => setFee(e.target.value)}
+            min={0}
+            step={1000}
+          />
+          <div className="coach-inline-actions">
+            <button type="submit" className="coach-btn-primary" disabled={saving}>
+              {saving ? "Guardando…" : "Guardar alumno"}
+            </button>
+            <button type="button" className="coach-btn-secondary" onClick={() => setShowForm(false)}>
+              Cancelar
+            </button>
+          </div>
+        </form>
+      ) : (
+        <button
+          type="button"
+          className="coach-btn-primary"
+          style={{ marginTop: 20 }}
+          onClick={() => setShowForm(true)}
+        >
+          + Agregar alumno
+        </button>
+      )}
     </div>
   );
 }

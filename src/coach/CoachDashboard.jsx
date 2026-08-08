@@ -7,12 +7,13 @@ import CalendarScreen from "./screens/CalendarScreen.jsx";
 import StudentsScreen from "./screens/StudentsScreen.jsx";
 import PaymentsScreen from "./screens/PaymentsScreen.jsx";
 import StudentDetailScreen from "./screens/StudentDetailScreen.jsx";
-import { getStudent, coach as mockCoach } from "./data/mock.js";
+import { getMonthLabel, getStudent } from "./data/studentData.js";
 import { useTheme } from "./hooks/useTheme.jsx";
+import CoachActionToast from "./components/CoachActionToast.jsx";
 
 function CoachShell() {
   const { logout } = useAuth();
-  const { ready, coach } = useCoach();
+  const { ready, coach, students } = useCoach();
   const [tab, setTab] = useState("home");
   const [selectedStudentId, setSelectedStudentId] = useState(null);
   const [focusKind, setFocusKind] = useState(null);
@@ -51,12 +52,12 @@ function CoachShell() {
   }
 
   const displayCoach = {
-    name: coach.brand_name?.split(" ")[0] || mockCoach.name,
-    brand: coach.brand_name || mockCoach.brand,
-    monthLabel: mockCoach.monthLabel,
+    name: coach.brand_name?.split(" ")[0] || "Coach",
+    brand: coach.brand_name || "Studio Fit",
+    monthLabel: getMonthLabel(),
   };
 
-  const student = selectedStudentId ? getStudent(selectedStudentId) : null;
+  const student = selectedStudentId ? getStudent(students, selectedStudentId) : null;
 
   if (student) {
     return (
@@ -74,7 +75,7 @@ function CoachShell() {
         )}
         {tab === "calendar" && <CalendarScreen onOpenStudent={openStudent} />}
         {tab === "students" && <StudentsScreen onOpenStudent={openStudent} />}
-        {tab === "payments" && <PaymentsScreen onOpenStudent={openStudent} />}
+        {tab === "payments" && <PaymentsScreen />}
       </main>
       <TabBar active={tab} onChange={setTab} />
     </>
@@ -87,6 +88,7 @@ export default function CoachDashboard() {
   return (
     <CoachProvider>
       <div className="coach-app" data-theme={theme}>
+        <CoachActionToast />
         <CoachShell />
       </div>
     </CoachProvider>

@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useTheme } from "../../coach/hooks/useTheme.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export default function PortalLogin() {
   const { login } = useAuth();
+  const { theme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -22,41 +24,51 @@ export default function PortalLogin() {
   };
 
   return (
-    <div className="portal-auth">
-      <div className="portal-auth-card">
-        <p className="portal-eyebrow">Studio Fit</p>
-        <h1 className="portal-title">Iniciar sesión</h1>
-        <p className="portal-subtitle">
-          Accede con tu cuenta de administrador, coach o alumno.
-        </p>
-        <form className="portal-form" onSubmit={handleSubmit}>
-          <label>
-            Email
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu@email.com"
-              autoComplete="email"
-              required
-            />
-          </label>
-          <label>
-            Contraseña
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-              required
-            />
-          </label>
-          {error && <p className="portal-error">{error}</p>}
-          <button type="submit" className="portal-btn-primary" disabled={loading}>
-            {loading ? "Entrando…" : "Entrar"}
-          </button>
-        </form>
-      </div>
+    <div className="coach-app" data-theme={theme}>
+      <main className="coach-main coach-main--student">
+        <div className="coach-screen">
+          <p className="coach-studio-name">Studio Fit</p>
+          <h1 className="coach-large-title">Iniciar sesión</h1>
+          <p className="coach-subtitle">
+            Accede con tu cuenta de administrador, coach o alumno.
+          </p>
+          <form
+            className="coach-group coach-glass"
+            style={{ padding: 16, marginTop: 8 }}
+            onSubmit={handleSubmit}
+          >
+            <label className="coach-row" style={{ flexDirection: "column", alignItems: "stretch" }}>
+              <span className="coach-row-subtitle">Email</span>
+              <input
+                type="email"
+                className="coach-field"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="tu@email.com"
+                autoComplete="email"
+                required
+              />
+            </label>
+            <label className="coach-row" style={{ flexDirection: "column", alignItems: "stretch" }}>
+              <span className="coach-row-subtitle">Contraseña</span>
+              <input
+                type="password"
+                className="coach-field"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+              />
+            </label>
+            {error && (
+              <p className="coach-row-subtitle coach-row-subtitle--accent">{error}</p>
+            )}
+            <button type="submit" className="coach-btn-primary" disabled={loading}>
+              {loading ? "Entrando…" : "Entrar"}
+            </button>
+          </form>
+        </div>
+      </main>
     </div>
   );
 }

@@ -16,9 +16,9 @@ export default function MonthCalendar({
   onSelectDay,
   onPrevMonth,
   onNextMonth,
+  today = REFERENCE_TODAY,
 }) {
   const cells = getMonthGrid(year, month);
-  const today = REFERENCE_TODAY;
 
   return (
     <div className="coach-calendar">

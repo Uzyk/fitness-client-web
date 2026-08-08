@@ -1,26 +1,32 @@
 import AdminDashboard from "../admin/AdminDashboard.jsx";
 import CoachDashboard from "../coach/CoachDashboard.jsx";
+import { useTheme } from "../coach/hooks/useTheme.jsx";
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import PortalLogin from "./screens/PortalLogin.jsx";
 import StudentHome from "./screens/StudentHome.jsx";
 
+function PortalLoading() {
+  const { theme } = useTheme();
+  return (
+    <div className="coach-app" data-theme={theme}>
+      <main className="coach-main coach-main--student">
+        <div className="coach-screen">
+          <p className="coach-subtitle">Cargando…</p>
+        </div>
+      </main>
+    </div>
+  );
+}
+
 function PortalRouter() {
-  const { ready, session, role } = useAuth();
+  const { ready, session, role, logout } = useAuth();
 
   if (!ready) {
-    return (
-      <div className="portal-app">
-        <p className="portal-loading">Cargando…</p>
-      </div>
-    );
+    return <PortalLoading />;
   }
 
   if (!session) {
-    return (
-      <div className="portal-app">
-        <PortalLogin />
-      </div>
-    );
+    return <PortalLogin />;
   }
 
   if (role === "admin") {
@@ -32,30 +38,30 @@ function PortalRouter() {
   }
 
   if (role === "student") {
-    return (
-      <div className="portal-app">
-        <StudentHome />
-      </div>
-    );
+    return <StudentHome />;
   }
 
   return (
-    <div className="portal-app portal-unknown">
-      <h1 className="portal-title">Cuenta sin acceso</h1>
-      <p className="portal-subtitle">
-        Tu perfil no tiene un rol asignado. Contacta al administrador.
-      </p>
-      <LogoutButton />
-    </div>
+    <PortalUnknown onLogout={logout} />
   );
 }
 
-function LogoutButton() {
-  const { logout } = useAuth();
+function PortalUnknown({ onLogout }) {
+  const { theme } = useTheme();
   return (
-    <button type="button" className="portal-btn-primary" onClick={logout}>
-      Cerrar sesión
-    </button>
+    <div className="coach-app" data-theme={theme}>
+      <main className="coach-main coach-main--student">
+        <div className="coach-screen">
+          <h1 className="coach-large-title">Cuenta sin acceso</h1>
+          <p className="coach-subtitle">
+            Tu perfil no tiene un rol asignado. Contacta al administrador.
+          </p>
+          <button type="button" className="coach-btn-primary" onClick={onLogout} style={{ marginTop: 16 }}>
+            Cerrar sesión
+          </button>
+        </div>
+      </main>
+    </div>
   );
 }
 

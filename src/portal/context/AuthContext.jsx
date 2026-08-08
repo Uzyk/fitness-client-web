@@ -9,26 +9,32 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
 
   const refresh = async () => {
-    const s = await getSession();
-    setSession(s);
-    if (s) {
-      const p = await getProfile();
-      setProfile(p);
-    } else {
+    try {
+      const s = await getSession();
+      setSession(s);
+      if (s) {
+        const p = await getProfile();
+        setProfile(p);
+      } else {
+        setProfile(null);
+      }
+    } catch (err) {
+      console.error("AuthContext refresh:", err);
       setProfile(null);
+    } finally {
+      setReady(true);
     }
-    setReady(true);
+  };
+
+  const login = async (email, password) => {
+    await signIn(email, password);
+    await refresh();
   };
 
   useEffect(() => {
     refresh();
     return onAuthChange(() => refresh());
   }, []);
-
-  const login = async (email, password) => {
-    await signIn(email, password);
-    await refresh();
-  };
 
   const logout = async () => {
     await signOut();

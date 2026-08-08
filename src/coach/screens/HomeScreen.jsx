@@ -1,12 +1,19 @@
-import { modalityLabel } from "../theme.js";
 import ScreenHeader from "../components/ScreenHeader.jsx";
 import ActivityRings, { RingLegend } from "../components/ActivityRings.jsx";
-import { getAttentionItems, getPaymentSummary, getStudent, getTodayAgenda, coach as defaultCoach } from "../data/mock.js";
+import { useCoach } from "../context/CoachContext.jsx";
+import {
+  formatAgendaSubtitle,
+  getAttentionItems,
+  getPaymentSummary,
+  getStudent,
+  getTodayAgenda,
+} from "../data/studentData.js";
 
-export default function HomeScreen({ coach = defaultCoach, onOpenStudent, onLogout }) {
-  const attention = getAttentionItems();
-  const summary = getPaymentSummary();
-  const todayAgenda = getTodayAgenda();
+export default function HomeScreen({ coach, onOpenStudent, onLogout }) {
+  const { students, schedule } = useCoach();
+  const attention = getAttentionItems(students);
+  const summary = getPaymentSummary(students);
+  const todayAgenda = getTodayAgenda(schedule);
 
   return (
     <div className="coach-screen">
@@ -40,7 +47,7 @@ export default function HomeScreen({ coach = defaultCoach, onOpenStudent, onLogo
             </div>
           ) : (
             todayAgenda.map((item) => {
-              const student = getStudent(item.studentId);
+              const student = getStudent(students, item.studentId);
               const isOnline = item.kind === "online";
 
               return (
@@ -57,7 +64,7 @@ export default function HomeScreen({ coach = defaultCoach, onOpenStudent, onLogo
                   )}
                   <div className="coach-row-content">
                     <div className="coach-row-title">{student?.name}</div>
-                    <div className="coach-row-subtitle">{modalityLabel(student?.modality)}</div>
+                    <div className="coach-row-subtitle">{formatAgendaSubtitle(item)}</div>
                   </div>
                   <span className="coach-chevron">›</span>
                 </button>

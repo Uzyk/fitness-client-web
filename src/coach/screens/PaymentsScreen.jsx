@@ -1,6 +1,9 @@
+import { useState } from "react";
 import ScreenHeader from "../components/ScreenHeader.jsx";
-import { students, formatCLP } from "../data/mock.js";
+import PaymentReceiptSheet from "../components/PaymentReceiptSheet.jsx";
+import { formatCLP, getMonthLabel } from "../data/studentData.js";
 import { PaymentBadge } from "../components/Badges.jsx";
+import { useCoach } from "../context/CoachContext.jsx";
 
 function groupByStatus(list) {
   const review = list.filter((s) => s.paymentStatus === "review");
@@ -10,7 +13,7 @@ function groupByStatus(list) {
   return { review, overdue, pending, paid };
 }
 
-function PaymentGroup({ title, items, onOpenStudent }) {
+function PaymentGroup({ title, items, onViewReceipt }) {
   if (items.length === 0) return null;
   return (
     <section className="coach-section">
@@ -23,11 +26,11 @@ function PaymentGroup({ title, items, onOpenStudent }) {
             key={s.id}
             type="button"
             className="coach-row"
-            onClick={() => onOpenStudent(s.id, s.paymentStatus === "review" ? "receipt" : undefined)}
+            onClick={() => onViewReceipt(s)}
           >
             <div className="coach-row-content">
               <div className="coach-row-title">{s.name}</div>
-              <div className="coach-row-subtitle">{formatCLP(s.monthlyFee)} · Agosto 2026</div>
+              <div className="coach-row-subtitle">{formatCLP(s.monthlyFee)} · {getMonthLabel()}</div>
             </div>
             <PaymentBadge status={s.paymentStatus} />
             <span className="coach-chevron">›</span>
@@ -38,17 +41,28 @@ function PaymentGroup({ title, items, onOpenStudent }) {
   );
 }
 
-export default function PaymentsScreen({ onOpenStudent }) {
+export default function PaymentsScreen() {
+  const { students } = useCoach();
+  const [receiptStudent, setReceiptStudent] = useState(null);
   const { review, overdue, pending, paid } = groupByStatus(students);
 
   return (
-    <div className="coach-screen">
-      <ScreenHeader title="Pagos" subtitle="Agosto 2026" />
+    <>
+      <div className="coach-screen">
+        <ScreenHeader title="Pagos" subtitle={getMonthLabel()} />
 
-      <PaymentGroup title="Por revisar" items={review} onOpenStudent={onOpenStudent} />
-      <PaymentGroup title="Atrasados" items={overdue} onOpenStudent={onOpenStudent} />
-      <PaymentGroup title="Pendientes" items={pending} onOpenStudent={onOpenStudent} />
-      <PaymentGroup title="Al día" items={paid} onOpenStudent={onOpenStudent} />
-    </div>
+        <PaymentGroup title="Por revisar" items={review} onViewReceipt={setReceiptStudent} />
+        <PaymentGroup title="Atrasados" items={overdue} onViewReceipt={setReceiptStudent} />
+        <PaymentGroup title="Pendientes" items={pending} onViewReceipt={setReceiptStudent} />
+        <PaymentGroup title="Al día" items={paid} onViewReceipt={setReceiptStudent} />
+      </div>
+
+      {receiptStudent && (
+        <PaymentReceiptSheet
+          student={receiptStudent}
+          onClose={() => setReceiptStudent(null)}
+        />
+      )}
+    </>
   );
 }

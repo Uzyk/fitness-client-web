@@ -28,12 +28,19 @@ export default function CoachLogin() {
       <form className="coach-group coach-glass" style={{ padding: 16 }} onSubmit={handleSubmit}>
         <label className="coach-row" style={{ flexDirection: "column", alignItems: "stretch" }}>
           <span className="coach-row-subtitle">Email</span>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input
+            type="email"
+            className="coach-field"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </label>
         <label className="coach-row" style={{ flexDirection: "column", alignItems: "stretch" }}>
           <span className="coach-row-subtitle">Contraseña</span>
           <input
             type="password"
+            className="coach-field"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
