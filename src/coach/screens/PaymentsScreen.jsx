@@ -48,7 +48,7 @@ export default function PaymentsScreen() {
 
   return (
     <>
-      <div className="coach-screen">
+      <div className="coach-screen coach-screen--payments">
         <ScreenHeader title="Pagos" subtitle={getMonthLabel()} />
 
         <PaymentGroup title="Por revisar" items={review} onViewReceipt={setReceiptStudent} />

@@ -16,7 +16,7 @@ export default function HomeScreen({ coach, onOpenStudent, onLogout }) {
   const todayAgenda = getTodayAgenda(schedule);
 
   return (
-    <div className="coach-screen">
+    <div className="coach-screen coach-screen--dashboard">
       <ScreenHeader
         studioName={coach.brand}
         eyebrow={coach.monthLabel}

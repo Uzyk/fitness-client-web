@@ -110,7 +110,7 @@ export default function StudentCalendarScreen({ student, onLogout }) {
   };
 
   return (
-    <div className="coach-screen">
+    <div className="coach-screen coach-screen--calendar">
       <ScreenHeader
         studioName={student.coach?.brand_name || "Studio Fit"}
         title="Calendario"

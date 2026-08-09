@@ -64,7 +64,7 @@ export default function StudentsScreen({ onOpenStudent }) {
 
   if (inviteUrl) {
     return (
-      <div className="coach-screen">
+      <div className="coach-screen coach-screen--list">
         <ScreenHeader title="Invitación lista" subtitle="Comparte el link con tu alumno" />
         <div className="coach-group coach-glass" style={{ padding: 16 }}>
           <p className="coach-subtitle" style={{ marginBottom: 12 }}>
@@ -96,7 +96,7 @@ export default function StudentsScreen({ onOpenStudent }) {
   }
 
   return (
-    <div className="coach-screen">
+    <div className="coach-screen coach-screen--list">
       <ScreenHeader title="Alumnos" subtitle="Lista y filtros" />
 
       <div className="coach-search coach-glass">

@@ -1,0 +1,275 @@
+/* Layout escritorio — portal coach, alumno, admin e invitaciones */
+
+@media (min-width: 768px) {
+  /* ── Coach / alumno: barra lateral en lugar de tabs inferiores ── */
+  .coach-app {
+    flex-direction: row;
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: var(--bg);
+  }
+
+  .coach-app[data-theme="dark"] {
+    background: #0a0a0a;
+  }
+
+  body:has(.coach-app) {
+    background: var(--bg);
+  }
+
+  body:has(.coach-app[data-theme="dark"]) {
+    background: #0a0a0a;
+  }
+
+  .coach-tabbar {
+    order: 0;
+    position: sticky;
+    top: 0;
+    left: 0;
+    bottom: auto;
+    transform: none;
+    width: 240px;
+    min-width: 240px;
+    max-width: none;
+    height: 100dvh;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 4px;
+    padding: calc(20px + env(safe-area-inset-top)) 12px 24px;
+    border-top: none;
+    border-right: 0.5px solid var(--separator);
+    box-shadow: none;
+  }
+
+  .coach-tab {
+    flex: 0 0 auto;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    min-height: 44px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 12px;
+    width: 100%;
+  }
+
+  .coach-tab--active {
+    background: var(--fill);
+  }
+
+  .coach-tab-icon {
+    font-size: 18px;
+    width: 22px;
+    text-align: center;
+  }
+
+  .coach-main {
+    order: 1;
+    flex: 1;
+    min-width: 0;
+    margin-left: 0;
+    width: auto;
+    padding-bottom: 32px;
+  }
+
+  .coach-main--student,
+  .coach-main--student.coach-main--tabbed {
+    padding-bottom: 32px;
+  }
+
+  .coach-screen {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: calc(20px + env(safe-area-inset-top)) 32px 40px;
+  }
+
+  .coach-screen--detail {
+    max-width: 960px;
+  }
+
+  /* Inicio: resumen + columnas */
+  .coach-screen--dashboard {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 8px 28px;
+    align-items: start;
+  }
+
+  .coach-screen--dashboard > .coach-screen-header,
+  .coach-screen--dashboard > .coach-empty,
+  .coach-screen--dashboard > .coach-section:nth-of-type(1),
+  .coach-screen--dashboard > .coach-section:last-of-type {
+    grid-column: 1 / -1;
+  }
+
+  .coach-screen--dashboard > .coach-section:nth-of-type(2) {
+    grid-column: 1;
+  }
+
+  .coach-screen--dashboard > .coach-section:nth-of-type(3) {
+    grid-column: 2;
+  }
+
+  /* Calendario: próximas arriba, mes + detalle en columnas */
+  .coach-screen--calendar {
+    display: grid;
+    grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr);
+    gap: 8px 28px;
+    align-items: start;
+  }
+
+  .coach-screen--calendar > .coach-screen-header,
+  .coach-screen--calendar > .coach-inline-form,
+  .coach-screen--calendar > .coach-section:nth-of-type(1) {
+    grid-column: 1 / -1;
+  }
+
+  .coach-screen--calendar > .coach-section:nth-of-type(2) {
+    grid-column: 1;
+  }
+
+  .coach-screen--calendar > .coach-section:nth-of-type(3) {
+    grid-column: 2;
+    align-self: start;
+  }
+
+  /* Pagos: columnas por estado */
+  .coach-screen--payments {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 24px;
+    align-items: start;
+  }
+
+  .coach-screen--payments > .coach-screen-header {
+    grid-column: 1 / -1;
+  }
+
+  /* Listas más legibles */
+  .coach-screen--list .coach-search,
+  .coach-screen--list .coach-segmented {
+    max-width: 640px;
+  }
+
+  /* Sheets → modal centrado */
+  .coach-sheet-backdrop {
+    align-items: center;
+    padding: 24px;
+  }
+
+  .coach-sheet {
+    width: min(520px, 100%);
+    max-height: min(85vh, 720px);
+    border-radius: 20px;
+    padding: 16px 20px 24px;
+  }
+
+  .coach-action-toast {
+    top: 20px;
+    max-width: 420px;
+  }
+
+  /* Admin */
+  .admin-app {
+    max-width: 1100px;
+    margin: 0 auto;
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .admin-main {
+    padding: 24px 32px 48px;
+  }
+
+  .admin-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .admin-auth {
+    max-width: 420px;
+  }
+
+  /* Portal login */
+  .portal-auth-card {
+    max-width: 440px;
+    padding: 40px 36px;
+  }
+
+  /* Invitaciones */
+  .invite-app {
+    max-width: 520px;
+    padding: 48px 32px 56px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  body:has(.invite-app) {
+    display: flex;
+    justify-content: center;
+    background: var(--gradient-header, linear-gradient(180deg, #fce7f3, #e8eef5));
+  }
+
+  /* Login / estados sin barra lateral */
+  .coach-app:not(:has(.coach-tabbar)) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .coach-app:not(:has(.coach-tabbar)) .coach-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .coach-app:not(:has(.coach-tabbar)) .coach-main > .coach-screen {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .coach-app:not(:has(.coach-tabbar)) .coach-main > .coach-screen--detail {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .coach-tabbar {
+    width: 260px;
+    min-width: 260px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .coach-screen {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  .coach-screen--payments {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-list {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .coach-screen--payments {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Pantallas estrechas: mantener experiencia móvil actual */
+@media (max-width: 767px) {
+  .coach-app {
+    max-width: 430px;
+    margin: 0 auto;
+  }
+}

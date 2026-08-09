@@ -155,7 +155,7 @@ export default function CalendarScreen({ onOpenStudent }) {
   };
 
   return (
-    <div className="coach-screen">
+    <div className="coach-screen coach-screen--calendar">
       <ScreenHeader title="Calendario" subtitle="Sesiones y entrenamientos" />
 
       <section className="coach-section coach-animate-in">

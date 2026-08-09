@@ -20,7 +20,7 @@ export default function StudentPaymentsScreen({
     student.payments?.[student.payments.length - 1];
 
   return (
-    <div className="coach-screen">
+    <div className="coach-screen coach-screen--payments">
       <ScreenHeader
         studioName={student.coach?.brand_name || "Studio Fit"}
         title="Pagos"

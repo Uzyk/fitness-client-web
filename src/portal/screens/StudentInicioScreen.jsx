@@ -41,7 +41,7 @@ export default function StudentInicioScreen({
       : "";
 
   return (
-    <div className="coach-screen">
+    <div className="coach-screen coach-screen--dashboard">
       <ScreenHeader
         studioName={student.coach?.brand_name || "Studio Fit"}
         title={`Hola, ${student.name}`}

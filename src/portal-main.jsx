@@ -4,6 +4,7 @@ import { ThemeProvider } from "./coach/hooks/useTheme.jsx";
 import PortalApp from "./portal/PortalApp.jsx";
 import "./admin/admin.css";
 import "./coach/coach.css";
+import "./styles/desktop-layout.css";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
