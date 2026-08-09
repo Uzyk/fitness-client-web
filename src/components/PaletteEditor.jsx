@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { DEFAULT_COACH_THEME, THEME_PRESETS } from "../../lib/coachTheme.js";
+import { useEffect, useState } from "react";
+import { DEFAULT_COACH_THEME, THEME_PRESETS } from "../lib/coachTheme.js";
 
 const FIELDS = [
   { key: "rosado", label: "Rosado" },
@@ -10,8 +10,12 @@ const FIELDS = [
   { key: "celeste", label: "Celeste" },
 ];
 
-export default function PaletteEditor({ theme, onChange }) {
+export default function PaletteEditor({ theme, onChange, variant = "dark" }) {
   const [local, setLocal] = useState({ ...DEFAULT_COACH_THEME, ...theme });
+
+  useEffect(() => {
+    setLocal({ ...DEFAULT_COACH_THEME, ...theme });
+  }, [theme]);
 
   const update = (key, value) => {
     const next = { ...local, [key]: value };
@@ -25,7 +29,7 @@ export default function PaletteEditor({ theme, onChange }) {
   };
 
   return (
-    <div className="palette-editor">
+    <div className={`palette-editor palette-editor--${variant}`}>
       <div className="palette-presets">
         {THEME_PRESETS.map((p) => (
           <button key={p.id} type="button" className="palette-preset-btn" onClick={() => applyPreset(p)}>

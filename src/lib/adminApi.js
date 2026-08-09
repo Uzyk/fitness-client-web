@@ -17,11 +17,9 @@ export async function fetchCoaches() {
   return data;
 }
 
-export async function createCoach({ brandName, email, theme }) {
+export async function createCoach({ email }) {
   const { data, error } = await supabase.rpc("admin_create_coach", {
-    p_brand_name: brandName,
-    p_email: email,
-    p_theme: theme,
+    p_email: email.trim(),
   });
   if (error) throw error;
   return data;
@@ -43,9 +41,12 @@ export async function getInvitation(token) {
   return data;
 }
 
-export async function completeCoachOnboarding(token) {
+export async function completeCoachOnboarding(token, { fullName, brandName, theme }) {
   const { data, error } = await supabase.rpc("complete_coach_onboarding", {
     p_token: token,
+    p_full_name: fullName,
+    p_brand_name: brandName,
+    p_theme: theme,
   });
   if (error) throw error;
   return data;

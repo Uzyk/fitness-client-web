@@ -1,11 +1,10 @@
 import { useState } from "react";
-import PaletteEditor from "../components/PaletteEditor.jsx";
+import PaletteEditor from "../../components/PaletteEditor.jsx";
 import { createCoach, updateCoachTheme } from "../../lib/adminApi.js";
 import { buildInviteUrl, DEFAULT_COACH_THEME } from "../../lib/coachTheme.js";
 
 export default function CoachForm({ coach, onBack, onSaved }) {
   const isEdit = Boolean(coach);
-  const [brandName, setBrandName] = useState(coach?.brand_name || "");
   const [email, setEmail] = useState(coach?.email || "");
   const [theme, setTheme] = useState(coach?.theme || DEFAULT_COACH_THEME);
   const [inviteUrl, setInviteUrl] = useState("");
@@ -21,7 +20,7 @@ export default function CoachForm({ coach, onBack, onSaved }) {
         await updateCoachTheme(coach.id, theme);
         onSaved?.();
       } else {
-        const result = await createCoach({ brandName, email, theme });
+        const result = await createCoach({ email });
         setInviteUrl(buildInviteUrl(result.token));
       }
     } catch (err) {
@@ -34,8 +33,11 @@ export default function CoachForm({ coach, onBack, onSaved }) {
   if (inviteUrl) {
     return (
       <div className="admin-success">
-        <h2>Coach creado</h2>
-        <p>Envía este link al correo <strong>{email}</strong> para que cree su cuenta:</p>
+        <h2>Link de invitación listo</h2>
+        <p>
+          Envía este link a <strong>{email}</strong>. Allí configurará su nombre, marca y paleta de
+          colores antes de crear su cuenta.
+        </p>
         <div className="admin-invite-box">
           <code>{inviteUrl}</code>
         </div>
@@ -58,22 +60,13 @@ export default function CoachForm({ coach, onBack, onSaved }) {
       <button type="button" className="admin-back" onClick={onBack}>
         ‹ Volver
       </button>
-      <h2 className="admin-section-title">{isEdit ? "Editar paleta" : "Nuevo coach"}</h2>
+      <h2 className="admin-section-title">{isEdit ? "Editar paleta" : "Invitar coach"}</h2>
 
       <form className="admin-form" onSubmit={handleSubmit}>
-        {!isEdit && (
+        {!isEdit ? (
           <>
             <label>
-              Marca / nombre del coach
-              <input
-                value={brandName}
-                onChange={(e) => setBrandName(e.target.value)}
-                placeholder="Ej: Vania Gaete"
-                required
-              />
-            </label>
-            <label>
-              Email (recibirá la invitación)
+              Email del coach
               <input
                 type="email"
                 value={email}
@@ -82,18 +75,21 @@ export default function CoachForm({ coach, onBack, onSaved }) {
                 required
               />
             </label>
+            <p className="admin-muted" style={{ marginTop: -8, marginBottom: 16 }}>
+              Generaremos un link único. El coach definirá su nombre, marca y paleta al registrarse.
+            </p>
           </>
+        ) : (
+          <div className="admin-form-section">
+            <h3>Paleta de colores — {coach.brand_name}</h3>
+            <PaletteEditor theme={theme} onChange={setTheme} variant="dark" />
+          </div>
         )}
-
-        <div className="admin-form-section">
-          <h3>Paleta de colores</h3>
-          <PaletteEditor theme={theme} onChange={setTheme} />
-        </div>
 
         {error && <p className="admin-error">{error}</p>}
 
         <button type="submit" className="admin-btn-primary" disabled={loading}>
-          {loading ? "Guardando…" : isEdit ? "Guardar paleta" : "Crear e invitar"}
+          {loading ? "Generando…" : isEdit ? "Guardar paleta" : "Generar link de invitación"}
         </button>
       </form>
     </div>

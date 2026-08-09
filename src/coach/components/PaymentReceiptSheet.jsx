@@ -7,10 +7,11 @@ function isPdfUrl(url) {
   return /\.pdf(\?|$)/i.test(url);
 }
 
-export default function PaymentReceiptSheet({ student, onClose }) {
+export default function PaymentReceiptSheet({ student, payment = null, onClose }) {
   const { markPaid, askReceipt } = useCoach();
   const [busy, setBusy] = useState(false);
-  const receipt = student ? getStudentReceipt(student) : null;
+  const receipt = payment ?? (student ? getStudentReceipt(student) : null);
+  const showReviewActions = receipt?.status === "review";
 
   useEffect(() => {
     const onKey = (e) => {
@@ -51,7 +52,7 @@ export default function PaymentReceiptSheet({ student, onClose }) {
               {receipt?.month || "Pago mensual"} · {formatCLP(receipt?.amount ?? student.monthlyFee)}
             </p>
           </div>
-          <PaymentBadge status={student.paymentStatus} />
+          <PaymentBadge status={receipt?.status ?? student.paymentStatus} />
         </header>
 
         <div className="coach-sheet-body">
@@ -81,9 +82,9 @@ export default function PaymentReceiptSheet({ student, onClose }) {
           ) : (
             <div className="coach-receipt-empty">
               <p>
-                {student.paymentStatus === "review"
+                {receipt?.status === "review"
                   ? "Marca por revisar, pero aún no hay archivo adjunto."
-                  : "El alumno aún no ha subido un comprobante."}
+                  : "No hay comprobante adjunto para este pago."}
               </p>
             </div>
           )}
@@ -92,7 +93,7 @@ export default function PaymentReceiptSheet({ student, onClose }) {
           )}
         </div>
 
-        {student.paymentStatus === "review" && (
+        {showReviewActions && (
           <div className="coach-sheet-actions">
             <button
               type="button"

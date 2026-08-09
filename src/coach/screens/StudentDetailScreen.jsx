@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import NavBar from "../components/NavBar.jsx";
+import PaymentReceiptSheet from "../components/PaymentReceiptSheet.jsx";
 import { ModalityBadge, PaymentBadge } from "../components/Badges.jsx";
 import { modalityDescription, modalityLabel, paymentStatusLabel } from "../theme.js";
 import { formatCLP } from "../data/studentData.js";
@@ -639,7 +640,9 @@ function RutinaTab({ student, onSaveRoutines }) {
   );
 }
 
-function PagosTab({ student, onMarkPaid, onSendReminder }) {
+function PagosTab({ student, onMarkPaid, onSendReminder, onRequestReceipt }) {
+  const [selectedPayment, setSelectedPayment] = useState(null);
+
   const [busy, setBusy] = useState(false);
 
   const run = async (action) => {
@@ -651,44 +654,95 @@ function PagosTab({ student, onMarkPaid, onSendReminder }) {
     }
   };
 
+  const pendingReview = student.payments.find((p) => p.status === "review");
+
   return (
-    <section className="coach-section">
-      <div className="coach-group">
-        {student.payments.map((p, i) => (
-          <div key={i} className="coach-row">
-            <div className="coach-row-content">
-              <div className="coach-row-title">{p.month}</div>
-              <div className="coach-row-subtitle">
-                {formatCLP(p.amount)}
-                {p.confirmedAt ? ` · Confirmado ${p.confirmedAt}` : ""}
-                {p.submittedAt ? ` · Subido ${p.submittedAt}` : ""}
+    <>
+      <section className="coach-section">
+        {pendingReview && (
+          <div className="coach-group coach-glass" style={{ marginBottom: 16 }}>
+            <button
+              type="button"
+              className="coach-row coach-row--interactive"
+              onClick={() => setSelectedPayment(pendingReview)}
+            >
+              <div className="coach-row-content">
+                <div className="coach-row-title">Comprobante por revisar</div>
+                <div className="coach-row-subtitle">
+                  {pendingReview.month} · {formatCLP(pendingReview.amount)}
+                  {pendingReview.submittedAt ? ` · Subido ${pendingReview.submittedAt}` : ""}
+                </div>
               </div>
-            </div>
-            <PaymentBadge status={p.status} />
+              <PaymentBadge status="review" />
+              <span className="coach-chevron">›</span>
+            </button>
           </div>
-        ))}
-      </div>
-      {student.paymentStatus !== "paid" && (
-        <>
-          <button
-            type="button"
-            className="coach-btn-primary"
-            disabled={busy}
-            onClick={() => run(onMarkPaid)}
-          >
-            {busy ? "Actualizando…" : "Marcar como pagado"}
-          </button>
-          <button
-            type="button"
-            className="coach-btn-secondary"
-            disabled={busy}
-            onClick={() => run(onSendReminder)}
-          >
-            Enviar recordatorio
-          </button>
-        </>
+        )}
+
+        <h2 className="coach-section-label">Historial de pagos</h2>
+        <div className="coach-group">
+          {student.payments.map((p, i) => (
+            <button
+              key={i}
+              type="button"
+              className="coach-row coach-row--interactive"
+              onClick={() => setSelectedPayment(p)}
+            >
+              <div className="coach-row-content">
+                <div className="coach-row-title">{p.month}</div>
+                <div className="coach-row-subtitle">
+                  {formatCLP(p.amount)}
+                  {p.confirmedAt ? ` · Confirmado ${p.confirmedAt}` : ""}
+                  {p.submittedAt ? ` · Subido ${p.submittedAt}` : ""}
+                  {p.receiptUrl ? " · Comprobante disponible" : ""}
+                </div>
+              </div>
+              <PaymentBadge status={p.status} />
+              <span className="coach-chevron">›</span>
+            </button>
+          ))}
+        </div>
+        {student.paymentStatus !== "paid" && (
+          <>
+            <button
+              type="button"
+              className="coach-btn-primary"
+              disabled={busy}
+              onClick={() => run(onMarkPaid)}
+              style={{ marginTop: 12 }}
+            >
+              {busy ? "Actualizando…" : "Marcar como pagado"}
+            </button>
+            <button
+              type="button"
+              className="coach-btn-secondary"
+              disabled={busy}
+              onClick={() => run(onSendReminder)}
+            >
+              Enviar recordatorio
+            </button>
+            {student.paymentStatus === "review" && onRequestReceipt && (
+              <button
+                type="button"
+                className="coach-btn-secondary"
+                disabled={busy}
+                onClick={() => run(onRequestReceipt)}
+              >
+                Pedir otro comprobante
+              </button>
+            )}
+          </>
+        )}
+      </section>
+
+      {selectedPayment && (
+        <PaymentReceiptSheet
+          student={student}
+          payment={selectedPayment}
+          onClose={() => setSelectedPayment(null)}
+        />
       )}
-    </section>
+    </>
   );
 }
 
@@ -869,6 +923,7 @@ export default function StudentDetailScreen({ student, focusKind, onBack }) {
             student={student}
             onMarkPaid={() => markPaid(student.id)}
             onSendReminder={() => sendReminder(student.id)}
+            onRequestReceipt={() => askReceipt(student.id)}
           />
         )}
         {tab === "perfil" && (

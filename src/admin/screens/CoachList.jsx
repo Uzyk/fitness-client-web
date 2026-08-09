@@ -64,8 +64,10 @@ export default function CoachList({ onAdd, onEdit }) {
               <div key={coach.id} className="admin-card">
                 <div className="admin-card-header">
                   <div>
-                    <h3>{coach.brand_name}</h3>
-                    <p className="admin-muted">{coach.email}</p>
+                    <h3>{coach.brand_name === "Pendiente" ? coach.email : coach.brand_name}</h3>
+                    <p className="admin-muted">
+                      {coach.brand_name === "Pendiente" ? "Invitación pendiente" : coach.email}
+                    </p>
                   </div>
                   <span className={`admin-badge admin-badge--${coach.status}`}>
                     {STATUS_LABEL[coach.status] || coach.status}

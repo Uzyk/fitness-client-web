@@ -1396,6 +1396,35 @@ textarea {
   cursor: pointer;
 }
 
+.coach-btn-danger {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(225, 29, 72, 0.12);
+  color: #e11d48;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.coach-btn-danger:hover:not(:disabled) {
+  background: rgba(225, 29, 72, 0.18);
+}
+
+.coach-btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.coach-field-label {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
 .coach-exercise-feedback {
   margin-top: 10px;
   padding: 10px 12px;
@@ -1627,6 +1656,49 @@ textarea {
 
 .coach-row--session {
   align-items: center;
+}
+
+.coach-row--with-action {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+}
+
+.coach-row--with-action .coach-row-main {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.coach-row--with-action .coach-row-main:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.coach-row-copy {
+  margin: 0 16px 14px;
+  align-self: flex-start;
+}
+
+.coach-invite-box {
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--fill);
+  word-break: break-all;
+}
+
+.coach-invite-box code {
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 .coach-row--compact .coach-row-title {

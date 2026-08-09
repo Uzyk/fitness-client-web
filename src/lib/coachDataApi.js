@@ -8,6 +8,15 @@ function formatFeedbackDate(iso) {
   return d.toLocaleDateString("es-CL", { day: "2-digit", month: "2-digit" });
 }
 
+function pickPendingInviteToken(invitations) {
+  if (!invitations?.length) return null;
+  const now = Date.now();
+  const pending = invitations
+    .filter((inv) => !inv.accepted_at && new Date(inv.expires_at).getTime() > now)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  return pending[0]?.token || null;
+}
+
 function mapStudent(row, feedback = []) {
   const modality = row.modality;
   const { routines, activeRoutineId } = ensureStudentRoutines({
@@ -18,8 +27,10 @@ function mapStudent(row, feedback = []) {
 
   return {
     id: row.id,
-    name: row.full_name,
+    name: row.full_name === "Pendiente" ? row.email : row.full_name,
     email: row.email,
+    hasAccount: Boolean(row.user_id),
+    inviteToken: pickPendingInviteToken(row.student_invitations),
     modality,
     monthlyFee: row.monthly_fee,
     billingDay: row.billing_day,
@@ -47,7 +58,15 @@ export async function fetchStudentsForCoach(coachId) {
 
   const { data: rows, error } = await supabase
     .from("students")
-    .select("*")
+    .select(`
+      *,
+      student_invitations (
+        token,
+        expires_at,
+        accepted_at,
+        created_at
+      )
+    `)
     .eq("coach_id", coachId)
     .order("full_name");
 
@@ -171,6 +190,35 @@ export async function addScheduleEntry(studentId, { date, kind, time, place, foc
   return data;
 }
 
+export async function updateScheduleEntry(scheduleId, patch) {
+  if (!supabase) throw new Error("Supabase no configurado");
+  const { error } = await supabase.rpc("coach_update_schedule", {
+    p_schedule_id: scheduleId,
+    p_patch: patch,
+  });
+  if (error) throw error;
+}
+
+export async function deleteScheduleEntry(scheduleId) {
+  if (!supabase) throw new Error("Supabase no configurado");
+  const { error } = await supabase.rpc("coach_delete_schedule", {
+    p_schedule_id: scheduleId,
+  });
+  if (error) throw error;
+}
+
+export async function inviteStudent({ email, modality = "online", monthlyFee = 70000 }) {
+  if (!supabase) throw new Error("Supabase no configurado");
+  const { data, error } = await supabase.rpc("coach_invite_student", {
+    p_email: email,
+    p_modality: modality,
+    p_monthly_fee: monthlyFee,
+  });
+  if (error) throw error;
+  return data;
+}
+
+/** @deprecated use inviteStudent — crea alumno sin flujo de invitación */
 export async function createStudent({ fullName, email, modality = "online", monthlyFee = 70000 }) {
   if (!supabase) throw new Error("Supabase no configurado");
   const { data, error } = await supabase.rpc("coach_create_student", {

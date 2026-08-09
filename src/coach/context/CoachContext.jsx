@@ -4,12 +4,15 @@ import {
   addCoachComment,
   addScheduleEntry,
   createStudent,
+  inviteStudent,
+  deleteScheduleEntry,
   fetchScheduleForCoach,
   fetchStudentsForCoach,
   markPaymentPaid,
   publishVideoFeedback,
   requestReceipt,
   sendPaymentReminder,
+  updateScheduleEntry,
   updateStudentProfile,
   updateStudentRoutine,
   updateStudentRoutines,
@@ -113,11 +116,29 @@ export function CoachProvider({ children }) {
       "Datos del alumno actualizados",
     );
 
-  const addStudent = (payload) =>
-    runAction(() => createStudent(payload), "Alumno agregado");
+  const inviteStudentAccount = async (payload) => {
+    try {
+      const result = await inviteStudent(payload);
+      await refresh();
+      showAction("Link de invitación generado");
+      return result;
+    } catch (err) {
+      console.error(err);
+      showAction(err.message || "No se pudo generar la invitación", true);
+      throw err;
+    }
+  };
+
+  const addStudent = (payload) => inviteStudentAccount(payload);
 
   const scheduleSession = (studentId, payload) =>
     runAction(() => addScheduleEntry(studentId, payload), "Sesión agendada");
+
+  const updateSession = (scheduleId, patch) =>
+    runAction(() => updateScheduleEntry(scheduleId, patch), "Sesión actualizada");
+
+  const cancelSession = (scheduleId) =>
+    runAction(() => deleteScheduleEntry(scheduleId), "Sesión desagendada");
 
   useEffect(() => {
     refresh();
@@ -142,6 +163,8 @@ export function CoachProvider({ children }) {
         saveStudentProfile,
         addStudent,
         scheduleSession,
+        updateSession,
+        cancelSession,
       }}
     >
       {children}

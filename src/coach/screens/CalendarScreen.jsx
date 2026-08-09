@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import MonthCalendar from "../components/MonthCalendar.jsx";
 import ScreenHeader from "../components/ScreenHeader.jsx";
+import SessionEditSheet from "../components/SessionEditSheet.jsx";
 import { useCoach } from "../context/CoachContext.jsx";
 import {
   formatAgendaSubtitle,
@@ -34,7 +35,7 @@ function SessionMeta({ item }) {
   return <span className="coach-row-subtitle">{parts.join(" · ")}</span>;
 }
 
-function AgendaRow({ item, students, onOpenStudent }) {
+function AgendaRow({ item, students, onEditSession }) {
   const student = getStudent(students, item.studentId);
   if (!student) return null;
 
@@ -46,7 +47,7 @@ function AgendaRow({ item, students, onOpenStudent }) {
     <button
       type="button"
       className="coach-row coach-row--session"
-      onClick={() => onOpenStudent(item.studentId, isOnline ? "videos" : undefined)}
+      onClick={() => onEditSession(item)}
     >
       {isOnline ? (
         <span className="coach-day-dot coach-day-dot--online" aria-hidden />
@@ -83,6 +84,7 @@ export default function CalendarScreen({ onOpenStudent }) {
   const [viewYear, setViewYear] = useState(TODAY.getFullYear());
   const [viewMonth, setViewMonth] = useState(TODAY.getMonth());
   const [selectedDateKey, setSelectedDateKey] = useState(toDateKey(TODAY));
+  const [editingSession, setEditingSession] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [studentId, setStudentId] = useState("");
   const [kind, setKind] = useState("presencial");
@@ -172,7 +174,10 @@ export default function CalendarScreen({ onOpenStudent }) {
                   key={item.id}
                   type="button"
                   className="coach-row"
-                  onClick={() => selectDate(item.date)}
+                  onClick={() => {
+                    selectDate(item.date);
+                    setEditingSession(item);
+                  }}
                 >
                   <div className="coach-row-content">
                     <div className="coach-row-title">{student?.name}</div>
@@ -222,12 +227,21 @@ export default function CalendarScreen({ onOpenStudent }) {
                 key={item.id}
                 item={item}
                 students={students}
-                onOpenStudent={onOpenStudent}
+                onEditSession={setEditingSession}
               />
             ))
           )}
         </div>
       </section>
+
+      {editingSession && (
+        <SessionEditSheet
+          item={editingSession}
+          students={students}
+          onClose={() => setEditingSession(null)}
+          onOpenStudent={onOpenStudent}
+        />
+      )}
 
       {showForm ? (
         <form className="coach-inline-form coach-glass" onSubmit={handleSchedule} style={{ marginTop: 8 }}>
