@@ -31,7 +31,7 @@ export default function Hero() {
                 <li>Accesorios · Remo con mancuerna</li>
                 <li>Enfriamiento · Movilidad hombro</li>
               </ul>
-              <a href="/app" className={styles.cardBtn}>
+              <a href={site.portalUrl} className={styles.cardBtn}>
                 Iniciar sesión
               </a>
             </div>

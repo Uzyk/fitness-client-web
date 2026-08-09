@@ -1,11 +1,69 @@
 {
+  "redirects": [
+    {
+      "source": "/app",
+      "missing": [{ "type": "host", "value": "app.fitness-client-web.vercel.app" }],
+      "destination": "https://app.fitness-client-web.vercel.app/app",
+      "permanent": false
+    },
+    {
+      "source": "/app/:path*",
+      "missing": [{ "type": "host", "value": "app.fitness-client-web.vercel.app" }],
+      "destination": "https://app.fitness-client-web.vercel.app/app/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/admin",
+      "missing": [{ "type": "host", "value": "app.fitness-client-web.vercel.app" }],
+      "destination": "https://app.fitness-client-web.vercel.app/admin",
+      "permanent": false
+    },
+    {
+      "source": "/admin/:path*",
+      "missing": [{ "type": "host", "value": "app.fitness-client-web.vercel.app" }],
+      "destination": "https://app.fitness-client-web.vercel.app/admin/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/invite",
+      "missing": [{ "type": "host", "value": "app.fitness-client-web.vercel.app" }],
+      "destination": "https://app.fitness-client-web.vercel.app/invite",
+      "permanent": false
+    },
+    {
+      "source": "/invite/:path*",
+      "missing": [{ "type": "host", "value": "app.fitness-client-web.vercel.app" }],
+      "destination": "https://app.fitness-client-web.vercel.app/invite/:path*",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     { "source": "/encuesta", "destination": "/encuesta.html" },
     { "source": "/e/:slug", "destination": "/encuesta.html?s=:slug" },
-    { "source": "/app", "destination": "/portal.html" },
-    { "source": "/app/:path*", "destination": "/portal.html" },
-    { "source": "/admin", "destination": "/portal.html" },
-    { "source": "/admin/:path*", "destination": "/portal.html" },
-    { "source": "/invite", "destination": "/invite.html" }
+    {
+      "source": "/app",
+      "has": [{ "type": "host", "value": "app.fitness-client-web.vercel.app" }],
+      "destination": "/portal.html"
+    },
+    {
+      "source": "/app/:path*",
+      "has": [{ "type": "host", "value": "app.fitness-client-web.vercel.app" }],
+      "destination": "/portal.html"
+    },
+    {
+      "source": "/admin",
+      "has": [{ "type": "host", "value": "app.fitness-client-web.vercel.app" }],
+      "destination": "/portal.html"
+    },
+    {
+      "source": "/admin/:path*",
+      "has": [{ "type": "host", "value": "app.fitness-client-web.vercel.app" }],
+      "destination": "/portal.html"
+    },
+    {
+      "source": "/invite",
+      "has": [{ "type": "host", "value": "app.fitness-client-web.vercel.app" }],
+      "destination": "/invite.html"
+    }
   ]
 }
