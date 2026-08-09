@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchCoaches } from "../../lib/adminApi.js";
+import { deleteCoach, fetchCoaches } from "../../lib/adminApi.js";
 import { buildInviteUrl } from "../../lib/coachTheme.js";
 
 const STATUS_LABEL = {
@@ -8,11 +8,12 @@ const STATUS_LABEL = {
   suspended: "Suspendido",
 };
 
-export default function CoachList({ onAdd, onEdit }) {
+export default function CoachList({ onAdd, onEdit, onManageStudents }) {
   const [coaches, setCoaches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(null);
+  const [deleting, setDeleting] = useState(null);
 
   const load = async () => {
     setLoading(true);
@@ -34,6 +35,24 @@ export default function CoachList({ onAdd, onEdit }) {
     navigator.clipboard.writeText(buildInviteUrl(token));
     setCopied(id);
     setTimeout(() => setCopied(null), 2000);
+  };
+
+  const handleDelete = async (coach) => {
+    const label = coach.brand_name === "Pendiente" ? coach.email : coach.brand_name;
+    const ok = window.confirm(
+      `¿Eliminar al coach "${label}"?\n\nSe borrarán también todos sus alumnos, invitaciones y datos asociados. Esta acción no se puede deshacer.`
+    );
+    if (!ok) return;
+
+    setDeleting(coach.id);
+    try {
+      await deleteCoach(coach.id);
+      await load();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDeleting(null);
+    }
   };
 
   const latestInvite = (coach) => {
@@ -80,6 +99,13 @@ export default function CoachList({ onAdd, onEdit }) {
                   }}
                 />
                 <div className="admin-card-actions">
+                  <button
+                    type="button"
+                    className="admin-btn-secondary admin-btn-sm"
+                    onClick={() => onManageStudents(coach)}
+                  >
+                    Alumnos
+                  </button>
                   <button type="button" className="admin-btn-secondary admin-btn-sm" onClick={() => onEdit(coach)}>
                     Editar paleta
                   </button>
@@ -92,6 +118,14 @@ export default function CoachList({ onAdd, onEdit }) {
                       {copied === coach.id ? "¡Copiado!" : "Copiar link invitación"}
                     </button>
                   )}
+                  <button
+                    type="button"
+                    className="admin-btn-danger admin-btn-sm"
+                    disabled={deleting === coach.id}
+                    onClick={() => handleDelete(coach)}
+                  >
+                    {deleting === coach.id ? "Eliminando…" : "Eliminar"}
+                  </button>
                 </div>
               </div>
             );

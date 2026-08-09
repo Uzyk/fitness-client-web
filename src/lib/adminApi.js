@@ -33,6 +33,28 @@ export async function updateCoachTheme(coachId, theme) {
   if (error) throw error;
 }
 
+export async function deleteCoach(coachId) {
+  const { error } = await supabase.rpc("admin_delete_coach", {
+    p_coach_id: coachId,
+  });
+  if (error) throw error;
+}
+
+export async function fetchCoachStudents(coachId) {
+  const { data, error } = await supabase.rpc("admin_list_coach_students", {
+    p_coach_id: coachId,
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteStudent(studentId) {
+  const { error } = await supabase.rpc("admin_delete_student", {
+    p_student_id: studentId,
+  });
+  if (error) throw error;
+}
+
 export async function getInvitation(token) {
   const { data, error } = await supabase.rpc("get_coach_invitation", {
     p_token: token,
