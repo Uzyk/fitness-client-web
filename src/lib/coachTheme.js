@@ -49,9 +49,9 @@ export function applyCoachTheme(theme, root = document.documentElement) {
 }
 
 export function buildInviteUrl(token) {
-  const appOrigin =
-    import.meta.env.VITE_APP_ORIGIN ||
-    (typeof window !== "undefined" ? window.location.origin : "") ||
-    "https://app.fitness-client-web.vercel.app";
-  return `${appOrigin.replace(/\/$/, "")}/invite?token=${token}`;
+  const origin =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : import.meta.env.VITE_APP_ORIGIN || "";
+  return `${origin.replace(/\/$/, "")}/invite?token=${token}`;
 }

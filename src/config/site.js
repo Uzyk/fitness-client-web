@@ -15,10 +15,8 @@ export const site = {
     primary: "Reserva tu evaluacion",
     secondary: "Ver planes",
   },
-  /** URL del portal coach/alumno (prod: subdominio app; dev: /app local) */
-  portalUrl:
-    import.meta.env.VITE_PORTAL_URL ||
-    (import.meta.env.DEV ? "/app" : "https://app.fitness-client-web.vercel.app/app"),
+  /** URL del portal coach/alumno (misma web, ruta /app) */
+  portalUrl: "/app",
 };
 
 export const services = [
