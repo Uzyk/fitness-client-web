@@ -134,7 +134,13 @@ export default function SurveyApp({ survey }) {
           fontFamily: FONTS.body,
         }}
       >
-        <div style={{ width: "100%", maxWidth: "580px" }}>
+      <div
+        className="survey-shell"
+        style={{
+          width: "100%",
+          maxWidth: "580px",
+        }}
+      >
           {started && !done && (
             <div style={{ marginBottom: "24px", animation: "fadeUp 0.5s ease" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>

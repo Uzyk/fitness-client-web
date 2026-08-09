@@ -1,7 +1,7 @@
-/* Layout escritorio — portal coach, alumno, admin e invitaciones */
+/* Layout escritorio — todos los roles (coach, alumno, admin, login, invitaciones, encuesta) */
 
 @media (min-width: 768px) {
-  /* ── Coach / alumno: barra lateral en lugar de tabs inferiores ── */
+  /* ── Coach / alumno: barra lateral ── */
   .coach-app {
     flex-direction: row;
     max-width: none;
@@ -89,10 +89,9 @@
   }
 
   .coach-screen--detail {
-    max-width: 960px;
+    max-width: 1120px;
   }
 
-  /* Inicio: resumen + columnas */
   .coach-screen--dashboard {
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
@@ -115,7 +114,6 @@
     grid-column: 2;
   }
 
-  /* Calendario: próximas arriba, mes + detalle en columnas */
   .coach-screen--calendar {
     display: grid;
     grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr);
@@ -138,7 +136,6 @@
     align-self: start;
   }
 
-  /* Pagos: columnas por estado */
   .coach-screen--payments {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -150,13 +147,15 @@
     grid-column: 1 / -1;
   }
 
-  /* Listas más legibles */
   .coach-screen--list .coach-search,
   .coach-screen--list .coach-segmented {
-    max-width: 640px;
+    max-width: 720px;
   }
 
-  /* Sheets → modal centrado */
+  .coach-screen--list .coach-group {
+    max-width: 960px;
+  }
+
   .coach-sheet-backdrop {
     align-items: center;
     padding: 24px;
@@ -174,16 +173,103 @@
     max-width: 420px;
   }
 
-  /* Admin */
+  /* Login / carga / sin acceso — centrado, sin sidebar */
+  .coach-app--standalone {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .coach-app--standalone .coach-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+  }
+
+  .coach-app--standalone .coach-main > .coach-screen {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  /* ── Admin: sidebar + contenido ── */
   .admin-app {
-    max-width: 1100px;
-    margin: 0 auto;
-    border-left: 1px solid rgba(255, 255, 255, 0.06);
-    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    min-height: 100dvh;
+  }
+
+  .admin-sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 240px;
+    min-width: 240px;
+    padding: calc(24px + env(safe-area-inset-top)) 16px 24px;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    background: #121218;
+  }
+
+  .admin-sidebar-brand {
+    margin-bottom: 28px;
+  }
+
+  .admin-sidebar-title {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-top: 4px;
+  }
+
+  .admin-sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .admin-sidebar-link {
+    text-align: left;
+    background: transparent;
+    border: none;
+    color: rgba(245, 245, 247, 0.65);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .admin-sidebar-link--active,
+  .admin-sidebar-link:hover {
+    background: rgba(167, 139, 250, 0.15);
+    color: #e9d5ff;
+  }
+
+  .admin-sidebar-logout {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(245, 245, 247, 0.6);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: auto;
+  }
+
+  .admin-header--mobile {
+    display: none;
+  }
+
+  .admin-body {
+    flex: 1;
+    min-width: 0;
+    max-width: 1200px;
   }
 
   .admin-main {
-    padding: 24px 32px 48px;
+    padding: 32px 40px 48px;
   }
 
   .admin-list {
@@ -192,19 +278,13 @@
     gap: 16px;
   }
 
-  .admin-auth {
-    max-width: 420px;
-  }
-
-  /* Portal login */
-  .portal-auth-card {
-    max-width: 440px;
-    padding: 40px 36px;
+  .admin-form {
+    max-width: 640px;
   }
 
   /* Invitaciones */
   .invite-app {
-    max-width: 520px;
+    max-width: 560px;
     padding: 48px 32px 56px;
     border-radius: 0;
     box-shadow: none;
@@ -216,30 +296,15 @@
     background: var(--gradient-header, linear-gradient(180deg, #fce7f3, #e8eef5));
   }
 
-  /* Login / estados sin barra lateral */
-  .coach-app:not(:has(.coach-tabbar)) {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .coach-app:not(:has(.coach-tabbar)) .coach-main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .coach-app:not(:has(.coach-tabbar)) .coach-main > .coach-screen {
-    width: 100%;
-    max-width: 560px;
-  }
-
-  .coach-app:not(:has(.coach-tabbar)) .coach-main > .coach-screen--detail {
-    max-width: 960px;
+  /* Encuesta */
+  .survey-shell {
+    max-width: 720px !important;
   }
 }
 
 @media (min-width: 1024px) {
-  .coach-tabbar {
+  .coach-tabbar,
+  .admin-sidebar {
     width: 260px;
     min-width: 260px;
     padding-left: 16px;
@@ -251,12 +316,12 @@
     padding-right: 40px;
   }
 
-  .coach-screen--payments {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .admin-list {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+
+  .survey-shell {
+    max-width: 800px !important;
   }
 }
 
@@ -266,10 +331,19 @@
   }
 }
 
-/* Pantallas estrechas: mantener experiencia móvil actual */
+/* Móvil: panel estrecho tipo app nativa */
 @media (max-width: 767px) {
   .coach-app {
     max-width: 430px;
     margin: 0 auto;
+  }
+
+  .admin-app {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .invite-app {
+    max-width: 430px;
   }
 }

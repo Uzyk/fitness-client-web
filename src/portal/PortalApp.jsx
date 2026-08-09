@@ -8,7 +8,7 @@ import StudentHome from "./screens/StudentHome.jsx";
 function PortalLoading() {
   const { theme } = useTheme();
   return (
-    <div className="coach-app" data-theme={theme}>
+    <div className="coach-app coach-app--standalone" data-theme={theme}>
       <main className="coach-main coach-main--student">
         <div className="coach-screen">
           <p className="coach-subtitle">Cargando…</p>
@@ -49,7 +49,7 @@ function PortalRouter() {
 function PortalUnknown({ onLogout }) {
   const { theme } = useTheme();
   return (
-    <div className="coach-app" data-theme={theme}>
+    <div className="coach-app coach-app--standalone" data-theme={theme}>
       <main className="coach-main coach-main--student">
         <div className="coach-screen">
           <h1 className="coach-large-title">Cuenta sin acceso</h1>

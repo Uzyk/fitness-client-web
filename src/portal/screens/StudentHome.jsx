@@ -9,9 +9,12 @@ import StudentCalendarScreen from "./StudentCalendarScreen.jsx";
 import StudentRoutineScreen from "./StudentRoutineScreen.jsx";
 import StudentPaymentsScreen from "./StudentPaymentsScreen.jsx";
 
-function StudentShell({ children, theme, tabBar }) {
+function StudentShell({ children, theme, tabBar, standalone = false }) {
   return (
-    <div className="coach-app" data-theme={theme}>
+    <div
+      className={`coach-app${standalone ? " coach-app--standalone" : ""}`}
+      data-theme={theme}
+    >
       {children}
       {tabBar}
     </div>
@@ -77,7 +80,7 @@ export default function StudentHome() {
 
   if (loading) {
     return (
-      <StudentShell theme={theme}>
+      <StudentShell theme={theme} standalone>
         <main className="coach-main coach-main--student">
           <div className="coach-screen">
             <p className="coach-subtitle">Cargando…</p>
@@ -89,7 +92,7 @@ export default function StudentHome() {
 
   if (!student) {
     return (
-      <StudentShell theme={theme}>
+      <StudentShell theme={theme} standalone>
         <main className="coach-main coach-main--student">
           <div className="coach-screen">
             <h1 className="coach-large-title">Sin plan asignado</h1>

@@ -3,7 +3,7 @@ import StudentRoutinesBrowser from "../components/StudentRoutinesBrowser.jsx";
 
 export default function StudentRoutineScreen({ student, onLogout }) {
   return (
-    <div className="coach-screen">
+    <div className="coach-screen coach-screen--list">
       <ScreenHeader
         studioName={student.coach?.brand_name || "Studio Fit"}
         title="Rutina"

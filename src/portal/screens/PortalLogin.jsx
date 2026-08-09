@@ -24,7 +24,7 @@ export default function PortalLogin() {
   };
 
   return (
-    <div className="coach-app" data-theme={theme}>
+    <div className="coach-app coach-app--standalone" data-theme={theme}>
       <main className="coach-main coach-main--student">
         <div className="coach-screen">
           <p className="coach-studio-name">Studio Fit</p>

@@ -11,6 +11,21 @@ import { getMonthLabel, getStudent } from "./data/studentData.js";
 import { useTheme } from "./hooks/useTheme.jsx";
 import CoachActionToast from "./components/CoachActionToast.jsx";
 
+function CoachAppFrame({ children }) {
+  const { theme } = useTheme();
+  const { ready, coach } = useCoach();
+  const standalone = !ready || !coach;
+
+  return (
+    <div
+      className={`coach-app${standalone ? " coach-app--standalone" : ""}`}
+      data-theme={theme}
+    >
+      {children}
+    </div>
+  );
+}
+
 function CoachShell() {
   const { logout } = useAuth();
   const { ready, coach, students } = useCoach();
@@ -28,26 +43,35 @@ function CoachShell() {
     setFocusKind(null);
   };
 
+  const changeTab = (nextTab) => {
+    closeStudent();
+    setTab(nextTab);
+  };
+
   if (!ready) {
     return (
-      <div className="coach-screen">
-        <p className="coach-subtitle">Cargando…</p>
-      </div>
+      <main className="coach-main coach-main--student">
+        <div className="coach-screen">
+          <p className="coach-subtitle">Cargando…</p>
+        </div>
+      </main>
     );
   }
 
   if (!coach) {
     return (
-      <div className="coach-screen">
-        <h1 className="coach-large-title">Cuenta pendiente</h1>
-        <p className="coach-subtitle">
-          Tu cuenta aún no está vinculada a un perfil de coach. Usa el link de invitación que te
-          enviamos por email.
-        </p>
-        <button type="button" className="coach-btn-secondary" onClick={logout} style={{ marginTop: 16 }}>
-          Cerrar sesión
-        </button>
-      </div>
+      <main className="coach-main coach-main--student">
+        <div className="coach-screen">
+          <h1 className="coach-large-title">Cuenta pendiente</h1>
+          <p className="coach-subtitle">
+            Tu cuenta aún no está vinculada a un perfil de coach. Usa el link de invitación que te
+            enviamos por email.
+          </p>
+          <button type="button" className="coach-btn-secondary" onClick={logout} style={{ marginTop: 16 }}>
+            Cerrar sesión
+          </button>
+        </div>
+      </main>
     );
   }
 
@@ -59,38 +83,34 @@ function CoachShell() {
 
   const student = selectedStudentId ? getStudent(students, selectedStudentId) : null;
 
-  if (student) {
-    return (
-      <main className="coach-main">
-        <StudentDetailScreen student={student} focusKind={focusKind} onBack={closeStudent} />
-      </main>
-    );
-  }
-
   return (
     <>
       <main className="coach-main">
-        {tab === "home" && (
-          <HomeScreen coach={displayCoach} onOpenStudent={openStudent} onLogout={logout} />
+        {student ? (
+          <StudentDetailScreen student={student} focusKind={focusKind} onBack={closeStudent} />
+        ) : (
+          <>
+            {tab === "home" && (
+              <HomeScreen coach={displayCoach} onOpenStudent={openStudent} onLogout={logout} />
+            )}
+            {tab === "calendar" && <CalendarScreen onOpenStudent={openStudent} />}
+            {tab === "students" && <StudentsScreen onOpenStudent={openStudent} />}
+            {tab === "payments" && <PaymentsScreen />}
+          </>
         )}
-        {tab === "calendar" && <CalendarScreen onOpenStudent={openStudent} />}
-        {tab === "students" && <StudentsScreen onOpenStudent={openStudent} />}
-        {tab === "payments" && <PaymentsScreen />}
       </main>
-      <TabBar active={tab} onChange={setTab} />
+      <TabBar active={tab} onChange={changeTab} />
     </>
   );
 }
 
 export default function CoachDashboard() {
-  const { theme } = useTheme();
-
   return (
     <CoachProvider>
-      <div className="coach-app" data-theme={theme}>
+      <CoachAppFrame>
         <CoachActionToast />
         <CoachShell />
-      </div>
+      </CoachAppFrame>
     </CoachProvider>
   );
 }

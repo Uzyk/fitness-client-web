@@ -1,6 +1,6 @@
 .invite-app {
   min-height: 100dvh;
-  max-width: 430px;
+  width: 100%;
   margin: 0 auto;
   padding: calc(32px + env(safe-area-inset-top)) 24px 40px;
   background: var(--gradient-header, linear-gradient(180deg, #fce7f3, #f2f2f7));
